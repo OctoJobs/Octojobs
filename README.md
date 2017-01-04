@@ -1,13 +1,16 @@
 #OCTOJOBS#
 Octojobs is a Github-based, open source, webscraper and job opportunity aggregator. It scrapes a jobboard website, such as LinkedIn or Monster.com, and returns a query of jobs based on user-provided keywords.
 
+##Mission Statement
+Get more reach for your job search
+
 ## User Stories
 ###User
-As a user, we want an easy, one stop shop for our job search. 
+As a user, we want an easy, one stop shop for our job search to find a job. 
 
 As a user, we want a clear way to sort through the data for the exact information we want.
 
-As a user, we want a straightforward, beautiful user experience.
+As a user, we want a straightforward, beautiful user experience to make the retieval of information easy.
 
 As a user, we want to search for specific skills and job titles. 
 
@@ -17,6 +20,8 @@ As a developer, we want to build elegant, readable code with optimal time comple
 As a developer, we want to gain experience managing large data sets and queries.
 
 As a developer, we want to gather data on what jobs and skills are in the highest demand.
+
+As a developer, we want to learn webscraping and data cleaning techniques.
 
 
 
