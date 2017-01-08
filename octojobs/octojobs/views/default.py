@@ -6,14 +6,24 @@ from sqlalchemy.exc import DBAPIError
 from ..models import MyModel
 
 
-@view_config(route_name='home', renderer='../templates/mytemplate.jinja2')
-def my_view(request):
-    try:
-        query = request.dbsession.query(MyModel)
-        one = query.filter(MyModel.name == 'one').first()
-    except DBAPIError:
-        return Response(db_err_msg, content_type='text/plain', status=500)
-    return {'one': one, 'project': 'octojobs'}
+@view_config(route_name='home', renderer='../templates/home.jinja2')
+def home_view(request):
+    """On initial load, shows search bar. On query submit, loads results."""
+    # If user presses submit button, load db query results:
+    # try:
+    #     query = request.dbsession.query(MyModel)
+    #     one = query.filter(MyModel.name == 'one').first()
+    # except DBAPIError:
+    #     return Response(db_err_msg, content_type='text/plain', status=500)
+    # return {'one': one, 'project': 'octojobs'}
+    # Else, display searchbar
+    return {}
+
+
+@view_config(route_name='about', renderer='../templates/about.jinja2')
+def about_view(request):
+    """Shows basic about us view."""
+    return {}
 
 
 db_err_msg = """\
