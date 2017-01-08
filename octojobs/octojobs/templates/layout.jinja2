@@ -23,10 +23,10 @@
     <![endif]-->
   </head>
 
-    <body>
-      <header>
-          <!-- <img id="logo" src={{ request.static_url('octojobs:static/images/logo.jpg') }} -->
-          <h1><a href={{ request.route_url('home') }}>OctoJobs</a></h1>
+    <body class="container">
+      <header class="row">
+          <!-- <img id="logo" class="col-lg-1 col-lg-offset-2" src={{ request.static_url('octojobs:static/images/logo.jpg') }} -->
+          <h1 class="col-lg-6 col-lg-offset-4"><a href={{ request.route_url('home') }}>OctoJobs</a></h1>
           <nav>
               <ul>
                   <li><a href={{ request.route_url('About Us') }}>About</a></li>
@@ -35,8 +35,8 @@
       </header>
       {% block body %}
       {% endblock %}
-      <footer>
-          <p class="footer">&#169 2016 OctoJobs</p>
+      <footer class="row">
+          <p class="footer col-sm-3">&#169 2016 OctoJobs</p>
       </footer>
       {% block javascript %}
       {% endblock %}
