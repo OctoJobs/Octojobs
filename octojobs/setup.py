@@ -13,20 +13,25 @@ requires = [
     'pyramid_jinja2',
     'pyramid_debugtoolbar',
     'pyramid_tm',
+    'ipython',
+    'pyramid_ipython'
     'SQLAlchemy',
     'transaction',
     'zope.sqlalchemy',
     'waitress',
+    'psycopg2',
+    'passlib'
     ]
 
 tests_require = [
     'WebTest >= 1.3.1',  # py3 compat
     'pytest',  # includes virtualenv
     'pytest-cov',
+    'tox'
     ]
 
 setup(name='octojobs',
-      version='0.0',
+      version='0.1',
       description='octojobs',
       long_description=README + '\n\n' + CHANGES,
       classifiers=[
@@ -35,8 +40,11 @@ setup(name='octojobs',
           "Topic :: Internet :: WWW/HTTP",
           "Topic :: Internet :: WWW/HTTP :: WSGI :: Application",
       ],
-      author='',
-      author_email='',
+      author="""Claire Gatenby,
+                Colin Lamont,
+                Marc Kessler-Wenicker,
+                Rachael Wisecarver""",
+      author_email='rachael.wiescarver@gmail.com',
       url='',
       keywords='web wsgi bfg pylons pyramid',
       packages=find_packages(),
@@ -50,6 +58,6 @@ setup(name='octojobs',
       [paste.app_factory]
       main = octojobs:main
       [console_scripts]
-      initialize_octojobs_db = octojobs.scripts.initializedb:main
+      initialize_db = octojobs.scripts.initializedb:main
       """,
       )
