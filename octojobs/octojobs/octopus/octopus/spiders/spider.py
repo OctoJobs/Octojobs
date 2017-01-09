@@ -22,8 +22,8 @@ class JobSpider(scrapy.Spider):
 
         for job in response.xpath('//*[@id="job-content"]'):
             yield {
-                'title': job.css('b.jobtitle::text').extract_first(),
-                'url': job.css('div.result-link-bar a.ws_label a::attr(href)').extract_first(),
+                'title': job.css('font::text').extract_first(),
+                'url': job.xpath('//*[@id="p_c7e367148ce1fe2b"]/span/a/@href').extract_first(),
                 'company': job.css('span.company::text').extract_first(),
                 'location': job.css('span.location::text').extract_first(),
                 'summary': job.css('span.summary::text').extract_first(),
