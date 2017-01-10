@@ -28,6 +28,14 @@ def result_view(request):
     searchterm = '%' + request.GET.get('search') + '%'
     query = request.dbsession.query(Job).filter(Job.city.ilike(searchterm)).first()
 
+    if request.method == 'POST':
+
+        searchterm = request.POST['searchbar']
+
+        return HTTPFound(
+            location=request.route_url('results', _query={'search': searchterm})
+        )
+
     return {'results': query}
 
 
