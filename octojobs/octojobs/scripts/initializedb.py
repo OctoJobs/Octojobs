@@ -1,3 +1,5 @@
+"""Initialize the database for Octojob profiles."""
+
 import os
 import sys
 import transaction
@@ -5,7 +7,7 @@ import transaction
 from pyramid.paster import (
     get_appsettings,
     setup_logging,
-    )
+)
 
 from pyramid.scripts.common import parse_vars
 
@@ -14,8 +16,9 @@ from ..models import (
     get_engine,
     get_session_factory,
     get_tm_session,
-    )
-from ..models import MyModel
+)
+
+from ..models import Language, City, Employer, Website, User, Job
 
 
 def usage(argv):
@@ -26,6 +29,7 @@ def usage(argv):
 
 
 def main(argv=sys.argv):
+    """Initialize the DB tables."""
     if len(argv) < 2:
         usage(argv)
     config_uri = argv[1]
@@ -39,7 +43,16 @@ def main(argv=sys.argv):
     session_factory = get_session_factory(engine)
 
     with transaction.manager:
+
         dbsession = get_tm_session(session_factory, transaction.manager)
 
-        model = MyModel(name='one', value=1)
-        dbsession.add(model)
+        models = [Job(name='index', value=1),
+                  Language(),
+                  City(),
+                  Employer(),
+                  Website(),
+                  User(),
+                  Job()]
+
+        for model in models:
+            dbsession.add(model)
