@@ -19,12 +19,6 @@ class Language(Base):
     __tablename__ = 'programming_language'
     id = Column(Integer, primary_key=True)
     children = relationship("Job", back_populates="parent")
-    version_id = Column(Integer)
-    name = Column(Unicode)
-
-class Version(Base):
-    __tablename__ = 'programming_language'
-    id = Column(Integer, primary_key=True)
     name = Column(Unicode)
 
 class City(Base):
@@ -65,23 +59,16 @@ class User(Base):
     favorites = Column(Blob)
     csv = Column(Blob)
 
-class Currency(Base):
-    __tablename__ = 'currency'
-    id = Column(Integer, primary_key=True)
-    name = Column(Unicode)
-    country_id = Column(Unicode)
-
 class Job(Base):
     __tablename__ = 'job'
     id = Column(Integer, primary_key=True)
-    # version_id = Column(Integer, foreign_key=True)
     city_id = Column(Integer, ForeignKey('city.id'))
     parent = relationship('City', back_populates='children')
     employer_id = Column(Integer, ForeignKey('employer.id'))
     parent = relationship('Employer', back_populates='children')
     source_id = Column(Integer, ForeignKey('website.id'))
-    currency_id = Column(Integer, ForeignKey('currency.id')
-    language_id = Column(Integer, ForeignKey('language_id))
+    parent = relationship('Website', back_populates='children')
+    language_id = Column(Integer, ForeignKey('language_id'))
     parent = relationship('Language', back_populates='children')
     creation_date = Column(Date)
     update_date = Column(Date)
