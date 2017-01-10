@@ -10,12 +10,13 @@ from ..models import Job
 def home_view(request):
     """On initial load, shows search bar. On query submit, loads results."""
     # If user presses submit button, load db query results:
-    # try:
-    #     query = request.dbsession.query(Job)
-    #     one = query.filter(Job.name == 'one').first()
+    # try
+        if request.method == 'POST':
+            searchterm = request.POST['searchbar'] + '%'
+            query = session.query(Job).filter(Job.city.like(searchterm))
+
     # except DBAPIError:
     #     return Response(db_err_msg, content_type='text/plain', status=500)
-    # return {'one': one, 'project': 'octojobs'}
     # Else, display searchbar
     return {}
 
