@@ -3,7 +3,7 @@ from pyramid.view import view_config
 
 from sqlalchemy.exc import DBAPIError
 
-from ..models import MyModel
+from ..models import Job
 
 
 @view_config(route_name='home', renderer='../templates/home.jinja2')
@@ -11,8 +11,8 @@ def home_view(request):
     """On initial load, shows search bar. On query submit, loads results."""
     # If user presses submit button, load db query results:
     # try:
-    #     query = request.dbsession.query(MyModel)
-    #     one = query.filter(MyModel.name == 'one').first()
+    #     query = request.dbsession.query(Job)
+    #     one = query.filter(Job.name == 'one').first()
     # except DBAPIError:
     #     return Response(db_err_msg, content_type='text/plain', status=500)
     # return {'one': one, 'project': 'octojobs'}
