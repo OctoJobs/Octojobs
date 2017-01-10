@@ -1,16 +1,12 @@
 appnope==0.1.0
-backports.shutil-get-terminal-size==1.0.0
 decorator==4.0.10
-enum34==1.1.6
 ipython==5.1.0
 ipython-genutils==0.1.0
-Jinja2==2.9.2
+Jinja2==2.9.3
 Mako==1.0.6
 MarkupSafe==0.23
--e git+https://github.com/OctoJobs/Octojobs.git@2daf0022ffd5eed4028bd2f0f5c9aab8bf0b94eb#egg=octojobs&subdirectory=octojobs
 passlib==1.7.0
 PasteDeploy==1.5.2
-pathlib2==2.1.0
 pexpect==4.2.1
 pickleshare==0.7.4
 prompt-toolkit==1.0.9
@@ -37,3 +33,4 @@ WebOb==1.7.0
 zope.deprecation==4.2.0
 zope.interface==4.3.3
 zope.sqlalchemy==0.7.7
+
