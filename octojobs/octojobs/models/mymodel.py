@@ -15,8 +15,8 @@ class Job(Base):
     employer = Column(Unicode)
     source_url = Column(Unicode)
     language = Column(Unicode)
-    tile = Column(Integer)
-    description = Column(Integer)
+    title = Column(Unicode)
+    description = Column(Unicode)
 
 
 # Index('index', Job.title, unique=True, mysql_length=255)
