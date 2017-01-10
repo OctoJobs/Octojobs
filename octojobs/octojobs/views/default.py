@@ -1,6 +1,5 @@
 """Render views from configurations."""
 
-# from pyramid.response import Response
 from pyramid.view import view_config
 
 from pyramid.httpexceptions import HTTPFound
@@ -15,22 +14,19 @@ def home_view(request):
 
         searchterm = request.POST['searchbar']
 
-        # url = request.route_url('idea', idea='great', _query={'sort':'asc'})
+        return HTTPFound(
+            location=request.route_url('results', _query={'search': searchterm})
+        )
 
-        # url = '/results?search=' + searchterm
-
-        return HTTPFound(location=request.route_url('results', _query={'search': searchterm}))
     return {}
 
 
 @view_config(route_name='results', renderer='../templates/results.jinja2')
 def result_view(request):
     """Generate result view."""
-    # if request.method == 'GET':
-    import pdb; pdb.set_trace()
 
-    searchterm = request.GET.get('search') + '%'
-    query = request.dbsession.query(Job).filter(Job.city.like(searchterm))
+    searchterm = '%' + request.GET.get('search') + '%'
+    query = request.dbsession.query(Job).filter(Job.city.ilike(searchterm)).first()
 
     return {'results': query}
 
