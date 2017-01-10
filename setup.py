@@ -22,6 +22,7 @@ requires = [
     'psycopg2',
     'passlib',
     'scrapy',
+    'cffi'
     ]
 
 tests_require = [
