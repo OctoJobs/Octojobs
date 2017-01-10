@@ -15,7 +15,12 @@
             </div>
         </section>
         </section>
-        <section id="results" class="col-lg-6 col-lg-offset-3">
-        </section>
+            {% if results %}
+            <section id="results" class="col-lg-6 col-lg-offset-3">
+                {{ results.title }}
+                {{ results.city }}
+                {{ results.description }}
+            </section>
+            {% endif %}
     </section>
 {% endblock %}
