@@ -2,17 +2,21 @@ from sqlalchemy import (
     Column,
     Index,
     Integer,
-    Text,
+    Unicode,
 )
 
 from .meta import Base
 
 
-class MyModel(Base):
-    __tablename__ = 'models'
+class Job(Base):
+    __tablename__ = 'job'
     id = Column(Integer, primary_key=True)
-    name = Column(Text)
-    value = Column(Integer)
+    city = Column(Unicode)
+    employer = Column(Unicode)
+    source_url = Column(Unicode)
+    language = Column(Unicode)
+    title = Column(Unicode)
+    description = Column(Unicode)
 
 
-Index('my_index', MyModel.name, unique=True, mysql_length=255)
+# Index('index', Job.title, unique=True, mysql_length=255)
