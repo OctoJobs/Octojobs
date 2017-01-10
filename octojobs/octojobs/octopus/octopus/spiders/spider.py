@@ -8,7 +8,7 @@ class JobSpider(scrapy.Spider):
     """Job Spider with website URL."""
 
     name = "jobs"
-    allowed_domains = ["indeed.com"]
+    # allowed_domains = ["indeed.com"]
 
     start_urls = [
         # 'file:///Users/colinlamont/codefellows/python/lab-work/Octojobs/octojobs/octojobs/octopus/test.html',
@@ -25,24 +25,28 @@ class JobSpider(scrapy.Spider):
         if not response.xpath('//*[@id="job-content"]'):
             if response.xpath('//*[@id="resultsCol"]'):
                 url_list = []
-                for item in response.xpath('//*[@id="resultsCol"]'):
-                    anchor = item.css('div.result h2.jobtitle a.turnstileLink').extract_first()
+                for element in response.css('div.result h2.jobtitle'):
+                    anchor = element.css('a.turnstileLink').extract_first()
                     url = re.search(r'href="([^"]*)"', anchor).group(1)
                     base_url = 'https://www.indeed.com'
-                    base_url += url
-                    url_list.append(base_url)
+                    url_list.append(base_url + url)
                 for url in url_list:
-                    yield scrapy.Request(url)
+                    temp_url = ""
+                    temp_url = url
+                    url_list.pop(0)
+                    yield scrapy.Request(temp_url)
+
+                    if not response.xpath('//*[@id="job-content"]'):
+                        yield scrapy.Request(base_url)
             else:
-                print("Sorry, file not found.")
+                self.parse(response)
         elif response.xpath('//*[@id="job-content"]'):
             for job in response.xpath('//*[@id="job-content"]'):
+                # import pdb; pdb.set_trace()
                 yield {
                     'title': job.css('font::text').extract_first(),
-                    'url': job.xpath('//*[@id="p_c7e367148ce1fe2b"]/span/a/@href').extract_first(),
+                    'url': response.url,
                     'company': job.css('span.company::text').extract_first(),
                     'location': job.css('span.location::text').extract_first(),
                     'summary': job.css('span.summary::text').extract_first(),
                 }
-        # else:
-        #     yield scrapy.Request(start_urls)
