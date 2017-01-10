@@ -30,7 +30,7 @@ class JobSpider(scrapy.Spider):
                 # company_list = []
 
                 for element in response.css('div.result h2.jobtitle'):
-                    
+                    # import pdb; pdb.set_trace()
                     anchor = element.css('a.turnstileLink').extract_first()
                     title = re.search(r'title="([^"]*)"', anchor).group(1)
 
@@ -41,13 +41,15 @@ class JobSpider(scrapy.Spider):
                     company_dict[url]['title'] = title
 
                     data = response.css('div.result span.company')
-                    # import pdb;pdb.set_trace()
+                    
                     if data.css('span a'):
                         company = data.css('span a::text').extract_first()
                     else:
                         company = data.css('span::text').extract_first()
                     company = ' '.join(company.split())
                     company_dict[url]['company'] = company
+                    location = response.css('div.result span.location::text').extract_first()
+                    company_dict[url]['location'] = location
 
                 for key in company_dict:
                     yield scrapy.Request(key)
@@ -58,8 +60,8 @@ class JobSpider(scrapy.Spider):
                                 'title': company_dict[key]['title'],
                                 'url': company_dict[key]['url'],
                                 'company': company_dict[key]['company'],
-                                # location = element.css('span.location span::text').extract_first()
-                                # summary = element.css('span.summary::text').extract_first()
+                                'location': company_dict[key]['location'],
+                                # 'summary': company_dict[key]['summary'],
                             }
                             continue
             elif response.xpath('//*[@id="job-content"]'):
