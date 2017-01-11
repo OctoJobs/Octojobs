@@ -22,7 +22,8 @@ requires = [
     'psycopg2',
     'passlib',
     'scrapy',
-    'fake-useragent'
+    'fake-useragent',
+    'cffi'
 ]
 
 tests_require = [
