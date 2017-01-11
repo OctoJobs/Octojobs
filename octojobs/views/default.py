@@ -24,7 +24,7 @@ def home_view(request):
             return HTTPFound(
                 location=request.route_url('results', _query={'search': searchterm})
             )
-        
+
         elif searchterm == None and location:
             return HTTPFound(
                 location=request.route_url('results', _query={'search': location})
@@ -32,7 +32,7 @@ def home_view(request):
 
         elif searchterm and location:
             return HTTPFound(
-                )
+            )
 
     return {}
 
