@@ -19,6 +19,7 @@ def db_connect():
 
 def create_job_table(engine):
     """Create a table."""
+    Base.metadata.drop_all(engine)
     Base.metadata.create_all(engine)
 
 
