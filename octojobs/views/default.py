@@ -1,6 +1,7 @@
 """Render views from configurations."""
 
 from pyramid.view import view_config
+from sqlalchemy import or_, and_
 
 from pyramid.httpexceptions import HTTPFound
 
@@ -44,7 +45,17 @@ def result_view(request):
 
     searchterm = '%' + request.GET.get('search') +'%'
     location = '%' + request.GET.get('location') +'%'
-    query = request.dbsession.query(Job).filter(Job.city.ilike(searchterm)).first()
+    # query = request.dbsession.query(Job).filter(Job.city.ilike(searchterm)).first()
+
+    Flag = False
+    field_category = [Job.title, Job.company, Job.description]
+
+    if location:
+        for field in field_category:
+            if request.dbsession.query(Job).filter(and_(Job.city.ilike(location), field.ilike(searchterm))):
+                query = request.dbsession.query(Job).filter(and_(Job.city.ilike(location), field.ilike(searchterm)))
+                break
+
 
     if request.method == 'POST':
 
