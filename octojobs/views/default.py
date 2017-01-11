@@ -11,12 +11,28 @@ from ..models import Job
 def home_view(request):
     """On initial load, shows search bar. On query submit, loads results."""
     if request.method == 'POST':
-
+        
         searchterm = request.POST['searchbar']
+        location = request.POST['location']
 
-        return HTTPFound(
-            location=request.route_url('results', _query={'search': searchterm})
-        )
+        if location == None and searchterm == None:
+            return HTTPFound(
+                location=request.route_url('home')
+            )
+
+        elif location == None and searchterm:
+            return HTTPFound(
+                location=request.route_url('results', _query={'search': searchterm})
+            )
+        
+        elif searchterm == None and location:
+            return HTTPFound(
+                location=request.route_url('results', _query={'search': location})
+            )
+
+        elif searchterm and location:
+            return HTTPFound(
+                )
 
     return {}
 
@@ -31,6 +47,7 @@ def result_view(request):
     if request.method == 'POST':
 
         searchterm = request.POST['searchbar']
+        location = request.POST['location']
 
         return HTTPFound(
             location=request.route_url('results', _query={'search': searchterm})
