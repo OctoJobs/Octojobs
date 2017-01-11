@@ -9,9 +9,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.engine.url import URL
 from sqlalchemy import create_engine
 from octojobs.models.meta import Base
-# from octojobs.models import get_engine
 from octojobs.models.mymodel import Job
-# from spiders import JobSpider
 
 
 def db_connect():
@@ -55,5 +53,4 @@ class OctopusPipeline(object):
             finally:
                 session.close()
 
-        import pdb;pdb.set_trace()
         return item
