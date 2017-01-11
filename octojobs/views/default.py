@@ -45,7 +45,7 @@ def home_view(request):
 def result_view(request):
     """Generate result view."""
 
-    import pdb; pdb.set_trace()
+    # import pdb; pdb.set_trace()
     if request.GET.get('search'):
         searchterm = '%' + request.GET.get('search') +'%'
     else:
