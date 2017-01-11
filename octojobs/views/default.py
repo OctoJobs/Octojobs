@@ -47,14 +47,18 @@ def result_view(request):
     location = '%' + request.GET.get('location') +'%'
     # query = request.dbsession.query(Job).filter(Job.city.ilike(searchterm)).first()
 
-    Flag = False
     field_category = [Job.title, Job.company, Job.description]
 
-    if location:
+    if location and searchterm:
         for field in field_category:
             if request.dbsession.query(Job).filter(and_(Job.city.ilike(location), field.ilike(searchterm))):
                 query = request.dbsession.query(Job).filter(and_(Job.city.ilike(location), field.ilike(searchterm)))
                 break
+    
+    elif searchterm and location is None:
+        field_category.append(Job.city)
+        for field in field_category:
+            if request.dbsession.query(Job).filter(field.ilike(searchterm)):
 
 
     if request.method == 'POST':
