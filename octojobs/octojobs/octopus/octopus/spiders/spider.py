@@ -1,7 +1,7 @@
 """Module for our initial spider."""
 import scrapy
 import re
-from ..items import OctopusItem
+from octopus.items import OctopusItem
 
 
 class JobSpider(scrapy.Spider):
@@ -17,7 +17,7 @@ class JobSpider(scrapy.Spider):
     ]
 
     def parse(self, response):
-        """Check the response to see what type of page the spider is on.
+        """Default callback used by Scrapy to process downloaded responses.
 
         If the spider is on a home page with a list view, build a dictionary.
         This dictionary will contain references to each url, and the
@@ -76,7 +76,6 @@ class JobSpider(scrapy.Spider):
                             city=company_dict[key]['city'],
                             description=company_dict[key]['description'],
                         )
-                        # items[key] = Octopusitemcompany_dict[key]
                         continue
 
             elif response.xpath('//*[@id="job-content"]'):
@@ -97,5 +96,5 @@ class JobSpider(scrapy.Spider):
         if next_page is not None:
             next_page = response.urljoin(next_page)
             yield scrapy.Request(next_page, callback=self.parse)
-
-        return items
+        # import pdb; pdb.set_trace()
+        yield items
