@@ -64,7 +64,7 @@ def db_session(configuration, request):
     request.addfinalizer(teardown)
     return session
 
-
+@pytest.fixture
 def dummy_request(db_session):
     """It creates a fake HTTP Request and database session.
 
@@ -90,6 +90,12 @@ def test_new_jobs_are_added(db_session):
     db_session.add_all(DUMMY_JOBS)
     query = db_session.query(Job).all()
     assert len(query) == len(DUMMY_JOBS)
+
+
+def test_get_home_view_is_empty_dict(dummy_request):
+    """Assert empty dict is returned, from Get request."""
+    from octojobs.views.default import home_view
+    assert home_view(dummy_request) == {}
 
 
 # ============= FUNTIONAL TESTS =====================
