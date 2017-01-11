@@ -65,6 +65,7 @@ def db_session(configuration, request):
     request.addfinalizer(teardown)
     return session
 
+
 @pytest.fixture
 def dummy_request(db_session):
     """It creates a fake HTTP Request and database session.
@@ -112,7 +113,34 @@ def test_post_home_view_is_http_found(dummy_request):
     assert isinstance(result, HTTPFound)
 
 
+def test_post_home_view_reroutes_with_query(dummy_request):
+    """Assert search terms are passed on url."""
+    from octojobs.views.default import home_view
+
+    dummy_request.method = "POST"
+    dummy_request.POST["searchbar"] = "test"
+    dummy_request.POST["location"] = "seattle"
+
+    result = home_view(dummy_request)
+
+    assert 'test' and 'seattle' in result.location
+
+
+def test_post_result_view_reroutes_with_new_query(dummy_request):
+    """Assert search terms are passed on url on result view."""
+    from octojobs.views.default import result_view
+
+    dummy_request.method = "POST"
+    dummy_request.POST["searchbar"] = "test"
+    dummy_request.POST["location"] = "seattle"
+
+    result = result_view(dummy_request)
+
+    assert 'test' and 'seattle' in result.location
+
+
 # ============= FUNTIONAL TESTS =====================
+
 
 @pytest.fixture
 def testapp(request):
