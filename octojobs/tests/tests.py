@@ -7,6 +7,7 @@ from octojobs.models import get_tm_session
 from octojobs.models.meta import Base
 import faker
 from pyramid import testing
+from pyramid.httpexceptions import HTTPFound
 
 
 fake = faker.Faker()
@@ -96,6 +97,19 @@ def test_get_home_view_is_empty_dict(dummy_request):
     """Assert empty dict is returned, from Get request."""
     from octojobs.views.default import home_view
     assert home_view(dummy_request) == {}
+
+
+def test_post_home_view_is_http_found(dummy_request):
+    """Assert is instance of HTTP found, from POST request."""
+    from octojobs.views.default import home_view
+
+    dummy_request.method = "POST"
+    dummy_request.POST["searchbar"] = "test"
+    dummy_request.POST["location"] = "seattle"
+
+    result = home_view(dummy_request)
+
+    assert isinstance(result, HTTPFound)
 
 
 # ============= FUNTIONAL TESTS =====================
