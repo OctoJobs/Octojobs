@@ -12,8 +12,8 @@ class Job(Base):
     __tablename__ = 'job'
     id = Column(Integer, primary_key=True)
     city = Column(Unicode)
-    employer = Column(Unicode)
-    source_url = Column(Unicode)
+    company = Column(Unicode)
+    url = Column(Unicode)
     language = Column(Unicode)
     title = Column(Unicode)
     description = Column(Unicode)
