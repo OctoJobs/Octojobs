@@ -11,7 +11,7 @@ from ..models import Job
 def home_view(request):
     """On initial load, shows search bar. On query submit, loads results."""
     if request.method == 'POST':
-        
+
         searchterm = request.POST['searchbar']
         location = request.POST['location']
 
@@ -27,7 +27,7 @@ def home_view(request):
 
         elif searchterm == None and location:
             return HTTPFound(
-                location=request.route_url('results', _query={'search': location})
+                location=request.route_url('results', _query={'location': location})
             )
 
         elif searchterm and location:
@@ -41,7 +41,8 @@ def home_view(request):
 def result_view(request):
     """Generate result view."""
 
-    searchterm = '%' + request.GET.get('search') + '%'
+    searchterm = '%' + request.GET.get('search') +'%'
+    location = '%' + request.GET.get('location') +'%'
     query = request.dbsession.query(Job).filter(Job.city.ilike(searchterm)).first()
 
     if request.method == 'POST':
