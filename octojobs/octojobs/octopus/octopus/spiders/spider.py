@@ -13,7 +13,27 @@ class JobSpider(scrapy.Spider):
     name = "jobs"
 
     start_urls = [
-        'https://www.indeed.com/jobs?q=developer&l=seattle%2C+wa',
+        'https://www.indeed.com/jobs?q=python&l=seattle%2C+wa',
+        'https://www.indeed.com/jobs?q=javascript&l=seattle%2C+wa',
+        'https://www.indeed.com/jobs?q=ios&l=seattle%2C+wa',
+        'https://www.indeed.com/jobs?q=back+end&l=seattle%2C+wa',
+        'https://www.indeed.com/jobs?q=front+end&l=seattle%2C+wa',
+        'https://www.indeed.com/jobs?q=full+stack&l=seattle%2C+wa',
+        'https://www.indeed.com/jobs?q=data+scientist&l=seattle%2C+wa',
+        'https://www.indeed.com/jobs?q=python&l=San+Francisco+Bay+Area%2C+CA',
+        'https://www.indeed.com/jobs?q=javascript&l=San+Francisco+Bay+Area%2C+CA',
+        'https://www.indeed.com/jobs?q=ios&l=San+Francisco+Bay+Area%2C+CA',
+        'https://www.indeed.com/jobs?q=back+end&l=San+Francisco+Bay+Area%2C+CA',
+        'https://www.indeed.com/jobs?q=front+end&l=San+Francisco+Bay+Area%2C+CA',
+        'https://www.indeed.com/jobs?q=full+stack&l=San+Francisco+Bay+Area%2C+CA',
+        'https://www.indeed.com/jobs?q=data+scientist&l=San+Francisco+Bay+Area%2C+CA',
+        'https://www.indeed.com/jobs?q=python&l=New+York%2C+NY',
+        'https://www.indeed.com/jobs?q=javascript&l=New+York%2C+NY',
+        'https://www.indeed.com/jobs?q=ios&l=New+York%2C+NY',
+        'https://www.indeed.com/jobs?q=back+end&l=New+York%2C+NY',
+        'https://www.indeed.com/jobs?q=front+end&l=New+York%2C+NY',
+        'https://www.indeed.com/jobs?q=full+stack&l=New+York%2C+NY',
+        'https://www.indeed.com/jobs?q=data+scientist&l=New+York%2C+NY',
     ]
 
     def parse(self, response):
