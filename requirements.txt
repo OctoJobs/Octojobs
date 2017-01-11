@@ -6,7 +6,6 @@ ipython-genutils==0.1.0
 Jinja2==2.9.3
 Mako==1.0.6
 MarkupSafe==0.23
--e git+https://github.com/OctoJobs/Octojobs.git@3673dd77e322e4c23497e9f03a24a955959431e0#egg=octojobs
 passlib==1.7.0
 PasteDeploy==1.5.2
 pexpect==4.2.1

@@ -5,8 +5,9 @@
         <section id="searchbar" class="row">
             <div class="col-lg-6">
                 <div class="input-group">
-                    <form method="POST">
-                        <input type="text" class="form-control" name="searchbar" placeholder="Search for...">
+                    <form method="POST" size=300px>
+                        <input type="text" id="keyword" name="searchbar" placeholder="Search for..."/>
+                        <input type="text" id="location" name="location" placeholder="Location"/>
                         <span class="input-group-btn">
                         <button class="btn btn-default" type="submit">Go!</button>
                         </span>
@@ -16,9 +17,11 @@
         </section>
         </section>
         <section id="results" class="col-lg-6 col-lg-offset-3">
-            <h1>{{results.title}}</h1>
-            <p>{{results.city}}</p>
-            <p>{{results.description}}</p>
+            {% for result in results %}
+            <h1>{{result.title}}</h1>
+            <p>{{result.city}}</p>
+            <p>{{result.description}}</p>
+            {% endfor %}
         </section>
     </section>
 {% endblock %}
