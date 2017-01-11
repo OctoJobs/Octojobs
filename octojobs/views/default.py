@@ -32,6 +32,7 @@ def home_view(request):
 
         elif searchterm and location:
             return HTTPFound(
+                location=request.route_url('results', _query={'search': searchterm, 'location': location})
             )
 
     return {}
@@ -51,7 +52,7 @@ def result_view(request):
         location = request.POST['location']
 
         return HTTPFound(
-            location=request.route_url('results', _query={'search': searchterm})
+            location=request.route_url('results', _query={'search': searchterm, 'location': location})
         )
 
     return {'results': query}
