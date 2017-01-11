@@ -49,6 +49,7 @@ def main(argv=sys.argv):
             title='Windows UWP/Phone Developer, Seattle WA',
             company='Interloc Solutions',
             description="""Our Products & Technology group in Seattle has an immediate need for an experienced Windows developer (Windows 10/Windows Surface) to support our Informer mobile solution products. This position will contribute heavily to product builds, so prior mobile application development experience is essential. Experience with Windows 10/Windows Surface 3+ years demonstrated experience in .NET and C# development Strong knowledge of the .NET framework, C#, with component extensions Prior mobile application development SQLite (highly desired, but not required) Full SDLC experience, including release to operations and production This is a great opportunity to work with our progressive mobile team!""",
-            url="www.interlocsolutions.com"
+            url="www.interlocsolutions.com",
+            language='C#'
             )
         dbsession.add(model)
