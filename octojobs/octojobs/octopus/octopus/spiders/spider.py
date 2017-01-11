@@ -30,52 +30,52 @@ class JobSpider(scrapy.Spider):
         # 'file:///Users/rachaelwisecarver/codefellows/401/octojobs/Octojobs/octojobs/octojobs/octopus/indeed_list_view.html'
         # 'file:///Users/rachaelwisecarver/codefellows/401/octojobs/Octojobs/octojobs/octojobs/octopus/dice_list_view.html',
         'https://www.indeed.com/jobs?q=python&l=seattle%2C+wa',
-        'https://www.indeed.com/jobs?q=javascript&l=seattle%2C+wa',
-        'https://www.indeed.com/jobs?q=ios&l=seattle%2C+wa',
-        'https://www.indeed.com/jobs?q=back+end&l=seattle%2C+wa',
-        'https://www.indeed.com/jobs?q=front+end&l=seattle%2C+wa',
-        'https://www.indeed.com/jobs?q=full+stack&l=seattle%2C+wa',
-        'https://www.indeed.com/jobs?q=data+scientist&l=seattle%2C+wa',
-        'https://www.indeed.com/jobs?q=python&l=San+Francisco+Bay+Area%2C+CA',
-        'https://www.indeed.com/jobs?q=javascript&l=San+Francisco+Bay+Area%2C+CA',
-        'https://www.indeed.com/jobs?q=ios&l=San+Francisco+Bay+Area%2C+CA',
-        'https://www.indeed.com/jobs?q=back+end&l=San+Francisco+Bay+Area%2C+CA',
-        'https://www.indeed.com/jobs?q=front+end&l=San+Francisco+Bay+Area%2C+CA',
-        'https://www.indeed.com/jobs?q=full+stack&l=San+Francisco+Bay+Area%2C+CA',
-        'https://www.indeed.com/jobs?q=data+scientist&l=San+Francisco+Bay+Area%2C+CA',
-        'https://www.indeed.com/jobs?q=python&l=New+York%2C+NY',
-        'https://www.indeed.com/jobs?q=javascript&l=New+York%2C+NY',
-        'https://www.indeed.com/jobs?q=ios&l=New+York%2C+NY',
-        'https://www.indeed.com/jobs?q=back+end&l=New+York%2C+NY',
-        'https://www.indeed.com/jobs?q=front+end&l=New+York%2C+NY',
-        'https://www.indeed.com/jobs?q=full+stack&l=New+York%2C+NY',
-        'https://www.indeed.com/jobs?q=data+scientist&l=New+York%2C+NY',
+        # 'https://www.indeed.com/jobs?q=javascript&l=seattle%2C+wa',
+        # 'https://www.indeed.com/jobs?q=ios&l=seattle%2C+wa',
+        # 'https://www.indeed.com/jobs?q=back+end&l=seattle%2C+wa',
+        # 'https://www.indeed.com/jobs?q=front+end&l=seattle%2C+wa',
+        # 'https://www.indeed.com/jobs?q=full+stack&l=seattle%2C+wa',
+        # 'https://www.indeed.com/jobs?q=data+scientist&l=seattle%2C+wa',
+        # 'https://www.indeed.com/jobs?q=python&l=San+Francisco+Bay+Area%2C+CA',
+        # 'https://www.indeed.com/jobs?q=javascript&l=San+Francisco+Bay+Area%2C+CA',
+        # 'https://www.indeed.com/jobs?q=ios&l=San+Francisco+Bay+Area%2C+CA',
+        # 'https://www.indeed.com/jobs?q=back+end&l=San+Francisco+Bay+Area%2C+CA',
+        # 'https://www.indeed.com/jobs?q=front+end&l=San+Francisco+Bay+Area%2C+CA',
+        # 'https://www.indeed.com/jobs?q=full+stack&l=San+Francisco+Bay+Area%2C+CA',
+        # 'https://www.indeed.com/jobs?q=data+scientist&l=San+Francisco+Bay+Area%2C+CA',
+        # 'https://www.indeed.com/jobs?q=python&l=New+York%2C+NY',
+        # 'https://www.indeed.com/jobs?q=javascript&l=New+York%2C+NY',
+        # 'https://www.indeed.com/jobs?q=ios&l=New+York%2C+NY',
+        # 'https://www.indeed.com/jobs?q=back+end&l=New+York%2C+NY',
+        # 'https://www.indeed.com/jobs?q=front+end&l=New+York%2C+NY',
+        # 'https://www.indeed.com/jobs?q=full+stack&l=New+York%2C+NY',
+        # 'https://www.indeed.com/jobs?q=data+scientist&l=New+York%2C+NY',
         'https://www.dice.com/jobs?q=&l=seattle%2C+WA',
-        'https://www.dice.com/jobs?q=&l=San+Francisco+Bay+Area%2C+CA',
-        'https://www.dice.com/jobs?q=&l=New+York%2C+NY',
+        # 'https://www.dice.com/jobs?q=&l=San+Francisco+Bay+Area%2C+CA',
+        # 'https://www.dice.com/jobs?q=&l=New+York%2C+NY',
     ]
 
-    def create_dict(self, iter, url, title, company, city, description):
+    def create_dict(self, empty_dict, url, title, company, city, description):
         """Takes in an empty dictionary, and the items pulled from html.
         Creates a new dictionary within that dictionary holding these items."""
-        iter[url] = {}
-        iter[url]['url'] = url
-        iter[url]['title'] = title
-        iter[url]['company'] = company
-        iter[url]['city'] = city
-        iter[url]['description'] = description
-        return iter
+        empty_dict[url] = {}
+        empty_dict[url]['url'] = url
+        empty_dict[url]['title'] = title
+        empty_dict[url]['company'] = company
+        empty_dict[url]['city'] = city
+        empty_dict[url]['description'] = description
+        return empty_dict
 
-    def build_items(self, items, iter, key):
+    def build_items(self, items, full_dict, key):
         """Takes in a dictionary and a dict key.
         Returns an instance of the item class, to be passed to pipelines."""
 
         items[key] = OctopusItem(
-                        title=iter[key]['title'],
-                        url=iter[key]['url'],
-                        company=iter[key]['company'],
-                        city=iter[key]['city'],
-                        description=iter[key]['description'],
+                        title=full_dict[key]['title'],
+                        url=full_dict[key]['url'],
+                        company=full_dict[key]['company'],
+                        city=full_dict[key]['city'],
+                        description=full_dict[key]['description'],
                     )
         return items
 

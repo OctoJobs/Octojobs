@@ -43,6 +43,7 @@ class OctopusPipeline(object):
         """Save item instances into the database."""
         session = self.Session()
         for key in item:
+            import pdb;pdb.set_trace()
             job = Job(**item[key])
 
             try:

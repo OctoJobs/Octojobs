@@ -49,7 +49,8 @@ DATABASE = {
     'port': '5432',
     'username': 'nupuvbtqqrqeww',
     'password': os.environ["PASSWORD"],
-    'database': 'd3r8gpjvd7ucvv'
+    'database': 'd3r8gpjvd7ucvv',
+    # 'database': 'octojobs'
 }
 
 # Disable Telnet Console (enabled by default)
