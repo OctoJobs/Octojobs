@@ -1,14 +1,14 @@
 """The test module for the Octojobs project."""
 
-import transaction
-import pytest
+import faker
+from octojobs.models import mymodel
 from octojobs.models import Job
 from octojobs.models import get_tm_session
 from octojobs.models.meta import Base
-import faker
 from pyramid import testing
 from pyramid.httpexceptions import HTTPFound
-
+import pytest
+import transaction
 
 fake = faker.Faker()
 
@@ -217,7 +217,7 @@ def test_post_result_view_with_no_query(dummy_request):
 # ============= FUNTIONAL TESTS =====================
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def testapp(request):
     """The fixture creates a test app."""
     from webtest import TestApp
@@ -225,6 +225,7 @@ def testapp(request):
 
     def main(global_config, **settings):
         """The function returns a Pyramid WSGI application."""
+        settings["sqlalchemy.url"] = 'postgres:///test_jobs'
         config = Configurator(settings=settings)
         config.include('pyramid_jinja2')
         config.include('.models')
@@ -232,9 +233,7 @@ def testapp(request):
         config.scan()
         return config.make_wsgi_app()
 
-    app = main({}, **{
-        "sqlalchemy.url": 'postgres:///test_jobs'
-    })
+    app = main({}, **{})
     testapp = TestApp(app)
 
     SessionFactory = app.registry["dbsession_factory"]
@@ -264,3 +263,36 @@ def fill_the_db(testapp):
 #     response = testapp.get('results', method="POST", location="Seattle")
 #     html = response.html
 #     assert html.find_all("Windows") is True
+
+
+# ============= SPIDER TESTS =====================
+
+
+@pytest.fixture(scope="session")
+def spider():
+    """Create a JobSpider fixture to run through your code."""
+    from octopus.spiders.spider import JobSpider
+    spider = JobSpider()
+    return spider
+
+
+@pytest.fixture(scope="session")
+def test_dict():
+    """Create an empty dictionary."""
+    return {}
+
+
+def test_create_empty_dict(testapp, spider, test_dict):
+    """Test that create dict method returns null values in dict when empty."""
+    assert spider.create_dict(test_dict) == {None: {'city': None, 'company': None, 'description': None, 'title': None, 'url': None}}
+
+
+def test_create_full_dict(testapp, spider, test_dict):
+    """Test that create dict method returns expected values when dict full."""
+    url = "http:://www.example.com"
+    assert spider.create_dict(test_dict, title="Job", url=url, company="Google", city="Seattle, WA", description="This is a job.") == {"http:://www.example.com": {'city': "Seattle, WA", 'company': "Google", 'description': "This is a job.", 'title': "Job", 'url': "http:://www.example.com"}}
+
+
+# def test_create_OctopusItem_instance(testapp, spider, test_dict):
+#     """Test that when you input a dict, it returns an OctopusItem."""
+#     
