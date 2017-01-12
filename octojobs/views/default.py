@@ -50,6 +50,10 @@ def post_request(request):
 @view_config(route_name='results', renderer='../templates/results.jinja2')
 def result_view(request):
     """Generate results view."""
+    if request.method == 'POST':
+
+        return post_request(request)
+
     try:
         searchterm = '%' + request.GET.get('search') + '%'
     except TypeError:
@@ -63,48 +67,41 @@ def result_view(request):
     field_category = [Job.title, Job.company, Job.description]
     db_query = request.dbsession.query(Job)
 
-    if request.method == 'GET':
-        if location and searchterm:
-            for field in field_category:
-                qr = db_query.filter(and_(
-                    Job.city.ilike(location),
-                    field.ilike(searchterm)
-                ))
-                if qr.count() > 0:
-                    query = db_query.filter(and_(
-                        Job.city.ilike(location),
-                        field.ilike(searchterm))
-                    )
-                    break
-                return {'failed_search': 'No results'}
+    # if request.method == 'GET':
 
-        elif searchterm and location is None:
-            field_category.append(Job.city)
-            for field in field_category:
-                qr = db_query.filter(
-                    field.ilike(searchterm)
-                )
-                if qr.count() > 0:
-                    query = db_query.filter(
-                        field.ilike(searchterm)
-                    )
-                    break
-                return {'failed_search': 'No results'}
+    if location and searchterm:
 
-        elif location and searchterm is None:
-            qr = db_query.filter(Job.city.ilike(location))
-            if qr.count() > 0:
-                query = db_query.filter(
-                    Job.city.ilike(location)
-                )
-            else:
-                return {'failed_search': 'No results'}
+        for field in field_category:
+            filter_query = db_query.filter(and_(
+                Job.city.ilike(location),
+                field.ilike(searchterm)
+            ))
+            if filter_query.count() > 0:
+                search_hit = filter_query
+                break
 
-    if request.method == 'POST':
+            return {'failed_search': 'No results'}
 
-        return post_request(request)
+    elif searchterm and location is None:
+        field_category.append(Job.city)
 
-    return {'results': query}
+        for field in field_category:
+            filter_query = db_query.filter(field.ilike(searchterm))
+            if filter_query.count() > 0:
+                search_hit = filter_query
+                break
+
+            return {'failed_search': 'No results'}
+
+    elif location and searchterm is None:
+        filter_query = db_query.filter(Job.city.ilike(location))
+
+        if filter_query.count() > 0:
+            search_hit = filter_query
+        else:
+            return {'failed_search': 'No results'}
+
+    return {'results': search_hit}
 
 
 @view_config(route_name='about', renderer='../templates/about.jinja2')
