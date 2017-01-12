@@ -153,7 +153,7 @@ def test_post_home_view_with_only_searchterm_query(dummy_request):
 
 
 def test_post_home_view_with_no_query(dummy_request):
-    """Test only one query with only searchterm filled."""
+    """Test only no queries on the home form are passed on url."""
     from octojobs.views.default import home_view
 
     dummy_request.method = "POST"
@@ -178,17 +178,43 @@ def test_post_result_view_reroutes_with_new_query(dummy_request):
     assert 'test' and 'seattle' in result.location
 
 
-def test_post_home_view_with_no_query(dummy_request):
-    """Test only one query with only searchterm filled."""
-    from octojobs.views.default import home_view
+def test_post_results_view_with_location_query(dummy_request):
+    """Test only one query with only location filled."""
+    from octojobs.views.default import result_view
+
+    dummy_request.method = "POST"
+    dummy_request.POST["location"] = ""
+    dummy_request.POST["searchbar"] = "seattle"
+
+    result = result_view(dummy_request)
+
+    assert result.location == 'http://example.com/results?location=seattle'
+
+
+def test_post_result_view_with_search_query_only(dummy_request):
+    """Test only one query with only search filled."""
+    from octojobs.views.default import result_view
+
+    dummy_request.method = "POST"
+    dummy_request.POST["location"] = "test"
+    dummy_request.POST["searchbar"] = ""
+
+    result = result_view(dummy_request)
+
+    assert result.location == 'http://example.com/results?search=test'
+
+
+def test_post_result_view_with_no_query(dummy_request):
+    """Test only no queries on the home form are passed on url."""
+    from octojobs.views.default import result_view
 
     dummy_request.method = "POST"
     dummy_request.POST["location"] = ""
     dummy_request.POST["searchbar"] = ""
 
-    result = home_view(dummy_request)
+    result = result_view(dummy_request)
 
-    assert result.location == 'http://example.com/'
+    assert result.location == 'http://example.com/results'
 
 
 # ============= FUNTIONAL TESTS =====================
