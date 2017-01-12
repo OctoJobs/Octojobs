@@ -3,7 +3,7 @@
 from pyramid.view import view_config
 from sqlalchemy import or_, and_
 
-from pyramid.httpexceptions import HTTPFound
+from pyramid.httpexceptions import HTTPFound, HTTPNotFound
 
 from ..models import Job
 
@@ -12,16 +12,11 @@ from ..models import Job
 def home_view(request):
     """On initial load, shows search bar. On query submit, loads results."""
     if request.method == 'POST':
-        # import pdb; pdb.set_trace()
-        # if request.POST['searchbar']:
         searchterm = request.POST['searchbar']
-        # if request.POST['location']:
         location = request.POST['location']
 
-        if not location and not searchterm :
-            return HTTPFound(
-                location=request.route_url('home')
-            )
+        if not location and not searchterm:
+            return {'results': 'no result'}
 
         elif not location and searchterm:
             return HTTPFound(
@@ -43,9 +38,8 @@ def home_view(request):
 
 @view_config(route_name='results', renderer='../templates/results.jinja2')
 def result_view(request):
-    """Generate result view."""
+    """Generate results view."""
 
-    # import pdb; pdb.set_trace()
     if request.GET.get('search'):
         searchterm = '%' + request.GET.get('search') +'%'
     else:
@@ -55,14 +49,16 @@ def result_view(request):
         location = '%' + request.GET.get('location') +'%'
     else:
         location = None
-    # query = request.dbsession.query(Job).filter(Job.city.ilike(searchterm)).first()
+
 
     field_category = [Job.title, Job.company, Job.description]
 
     if request.method == 'GET':
+        import pdb; pdb.set_trace()
         if location and searchterm:
             print("search started")
             for field in field_category:
+                print("field when both filled", field)
                 if request.dbsession.query(Job).filter(and_(Job.city.ilike(location), field.ilike(searchterm))):
                     query = request.dbsession.query(Job).filter(and_(Job.city.ilike(location), field.ilike(searchterm)))
                     break
@@ -70,6 +66,7 @@ def result_view(request):
         elif searchterm and location is None:
             field_category.append(Job.city)
             for field in field_category:
+                print("field when location is none", field)
                 if request.dbsession.query(Job).filter(field.ilike(searchterm)):
                     query = request.dbsession.query(Job).filter(field.ilike(searchterm))
                     break
@@ -78,11 +75,10 @@ def result_view(request):
             if request.dbsession.query(Job).filter(Job.city.ilike(location)):
                 query = request.dbsession.query(Job).filter(Job.city.ilike(location))
 
-        elif location is None and searchterm is None:
-            return HTTPFound(location=request.route_url('no_search'))
-
         else:
-            return HTTPFound(location=request.route_url('no_results'))
+            print("hit the else / failed search")
+            return {'failed_search': "No results"}
+
 
     if request.method == 'POST':
 
@@ -92,7 +88,6 @@ def result_view(request):
         return HTTPFound(
             location=request.route_url('results', _query={'search': searchterm, 'location': location})
         )
-    # import pdb; pdb.set_trace()
     return {'results': query}
 
 

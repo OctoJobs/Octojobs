@@ -4,7 +4,7 @@
 #
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
-from settings import DATABASE
+from octopus.settings import DATABASE
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.engine.url import URL
 from sqlalchemy import create_engine
