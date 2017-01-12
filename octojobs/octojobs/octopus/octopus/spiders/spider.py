@@ -27,8 +27,6 @@ class JobSpider(scrapy.Spider):
     name = "jobs"
 
     start_urls = [
-        # 'file:///Users/rachaelwisecarver/codefellows/401/octojobs/Octojobs/octojobs/octojobs/octopus/indeed_list_view.html'
-        # 'file:///Users/rachaelwisecarver/codefellows/401/octojobs/Octojobs/octojobs/octojobs/octopus/dice_list_view.html',
         # 'https://www.indeed.com/jobs?q=python&l=seattle%2C+wa',
         # 'https://www.indeed.com/jobs?q=javascript&l=seattle%2C+wa',
         # 'https://www.indeed.com/jobs?q=ios&l=seattle%2C+wa',
@@ -167,7 +165,7 @@ class JobSpider(scrapy.Spider):
             for key in dice_company_dict:
                 yield scrapy.Request(key)
 
-                if not response.xpath('//*[@id="bd"]'):
+                if not response.css('div.highlight-black::text'):
                     self.build_items(items, dice_company_dict, key)
                     continue
 

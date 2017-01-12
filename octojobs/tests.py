@@ -227,14 +227,23 @@ def spider():
     return spider
 
 
-def test_create_empty_dict(testapp, spider):
+@pytest.fixture(scope="session")
+def test_dict():
+    """Create an empty dictionary."""
+    return {}
+
+
+def test_create_empty_dict(testapp, spider, test_dict):
     """Test that create dict method returns null values in dict when empty."""
-    test_dict = {}
     assert spider.create_dict(test_dict) == {None: {'city': None, 'company': None, 'description': None, 'title': None, 'url': None}}
 
 
-def test_create_full_dict(testapp, spider):
+def test_create_full_dict(testapp, spider, test_dict):
     """Test that create dict method returns expected values when dict full."""
-    test_dict = {}
     url = "http:://www.example.com"
     assert spider.create_dict(test_dict, title="Job", url=url, company="Google", city="Seattle, WA", description="This is a job.") == {"http:://www.example.com": {'city': "Seattle, WA", 'company': "Google", 'description': "This is a job.", 'title': "Job", 'url': "http:://www.example.com"}}
+
+
+# def test_create_OctopusItem_instance(testapp, spider, test_dict):
+#     """Test that when you input a dict, it returns an OctopusItem."""
+#     
