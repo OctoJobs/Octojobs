@@ -213,6 +213,15 @@ def test_post_result_view_with_no_query(dummy_request):
     assert result_view(dummy_request) == {'no_query': 'no result'}
 
 
+def test_post_with_location_and_kw_with_no_result(dummy_request):
+    """Test when no hit comes back from valid search."""
+    from octojobs.views.default import result_view
+
+    dummy_request.method = "POST"
+    dummy_request.POST["searchbar"] == "hjgdkgd"
+    dummy_request.POST["location"] == "NDGHFAS"
+
+    assert result_view(dummy_request) == {'failed_search': 'no result'}
 
 # ============= FUNTIONAL TESTS =====================
 

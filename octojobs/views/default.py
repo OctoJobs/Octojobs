@@ -65,7 +65,7 @@ def result_view(request):
             for field in field_category:
                 qr = request.dbsession.query(Job).filter(and_(Job.city.ilike(location), field.ilike(searchterm)))
                 if qr.count() > 0:
-                    query = request.dbsession.query(Job).filter(and_(Job.city.ilike(location), field.ilike(searchterm)))
+                    query = qr
                     break
                 return {'failed_search': 'No results'}
 
@@ -74,14 +74,14 @@ def result_view(request):
             for field in field_category:
                 qr = request.dbsession.query(Job).filter(field.ilike(searchterm))
                 if qr.count() > 0:
-                    query = request.dbsession.query(Job).filter(field.ilike(searchterm))
+                    query = qr
                     break
                 return {'failed_search': 'No results'}
 
         elif location and searchterm is None:
             qr = request.dbsession.query(Job).filter(Job.city.ilike(location))
             if qr.count() > 0:
-                query = request.dbsession.query(Job).filter(Job.city.ilike(location))
+                query = qr
             else:
                 return {'failed_search': 'No results'}
 
