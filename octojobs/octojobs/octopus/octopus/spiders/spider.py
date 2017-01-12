@@ -55,7 +55,7 @@ class JobSpider(scrapy.Spider):
         # 'https://www.dice.com/jobs?q=&l=New+York%2C+NY',
     ]
 
-    def create_dict(self, empty_dict, url, title, company, city, description):
+    def create_dict(self, empty_dict, url=None, title=None, company=None, city=None, description=None):
         """Takes in an empty dictionary, and the items pulled from html.
         Creates a new dictionary within that dictionary holding these items."""
         empty_dict[url] = {}

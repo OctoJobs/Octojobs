@@ -1,15 +1,13 @@
 """The test module for the Octojobs project."""
 
 import faker
+from octojobs.models import mymodel
 from octojobs.models import Job
 from octojobs.models import get_tm_session
 from octojobs.models.meta import Base
-import octopus
-import os
 from pyramid import testing
 from pyramid.httpexceptions import HTTPFound
 import pytest
-from scrapy.http import Response, Request
 import transaction
 
 fake = faker.Faker()
@@ -170,7 +168,7 @@ def test_post_result_view_reroutes_with_new_query(dummy_request):
 # ============= FUNTIONAL TESTS =====================
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def testapp(request):
     """The fixture creates a test app."""
     from webtest import TestApp
@@ -178,6 +176,7 @@ def testapp(request):
 
     def main(global_config, **settings):
         """The function returns a Pyramid WSGI application."""
+        settings["sqlalchemy.url"] = 'postgres:///test_jobs'
         config = Configurator(settings=settings)
         config.include('pyramid_jinja2')
         config.include('.models')
@@ -185,9 +184,7 @@ def testapp(request):
         config.scan()
         return config.make_wsgi_app()
 
-    app = main({}, **{
-        "sqlalchemy.url": 'postgres:///test_jobs'
-    })
+    app = main({}, **{})
     testapp = TestApp(app)
 
     SessionFactory = app.registry["dbsession_factory"]
@@ -222,7 +219,7 @@ def fill_the_db(testapp):
 # ============= SPIDER TESTS =====================
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def spider():
     """Create a JobSpider fixture to run through your code."""
     from octopus.spiders.spider import JobSpider
@@ -230,38 +227,14 @@ def spider():
     return spider
 
 
-def fake_response_from_file(file_name, url=None):
-    """
-    Create a Scrapy fake HTTP response from a HTML file
-    file_name: The relative filename from the responses directory,
-                      but absolute paths are also accepted.
-    url: The URL of the response.
-    returns: A scrapy HTTP response which can be used for unittesting.
-    Based on: http://stackoverflow.com/questions/6456304/scrapy-unit-testing/12741030#12741030.
-    """
-    if not url:
-        url = 'https://www.dice.com/jobs?q=&l=seattle%2C+WA'
-
-    request = Request(url=url)
-    if not file_name[0] == '/':
-        responses_dir = os.path.dirname(os.path.realpath(__file__))
-        file_path = os.path.join(responses_dir, file_name)
-    else:
-        file_path = file_name
-
-    file_content = open(file_path, 'r').read()
-
-    response = Response(
-        url=url,
-        request=request,
-        body=file_content
-        )
-    response.encoding = 'utf-8'
-    return response
+def test_create_empty_dict(testapp, spider):
+    """Test that create dict method returns null values in dict when empty."""
+    test_dict = {}
+    assert spider.create_dict(test_dict) == {None: {'city': None, 'company': None, 'description': None, 'title': None, 'url': None}}
 
 
-def test_parse(spider):
-    results = spider.parse(fake_response_from_file(
-        "dummy_html/dice.html"))
-    import pdb;pdb.set_trace()
-    assert len(results) == 1
+def test_create_full_dict(testapp, spider):
+    """Test that create dict method returns expected values when dict full."""
+    test_dict = {}
+    url = "http:://www.example.com"
+    assert spider.create_dict(test_dict, title="Job", url=url, company="Google", city="Seattle, WA", description="This is a job.") == {"http:://www.example.com": {'city': "Seattle, WA", 'company': "Google", 'description': "This is a job.", 'title': "Job", 'url': "http:://www.example.com"}}
