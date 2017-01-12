@@ -152,6 +152,19 @@ def test_post_home_view_with_only_searchterm_query(dummy_request):
     assert result.location == 'http://example.com/results?search=developer'
 
 
+def test_post_home_view_with_no_query(dummy_request):
+    """Test only one query with only searchterm filled."""
+    from octojobs.views.default import home_view
+
+    dummy_request.method = "POST"
+    dummy_request.POST["location"] = ""
+    dummy_request.POST["searchbar"] = ""
+
+    result = home_view(dummy_request)
+
+    assert result.location == 'http://example.com/'
+
+
 def test_post_result_view_reroutes_with_new_query(dummy_request):
     """Assert search terms are passed on url on result view."""
     from octojobs.views.default import result_view
@@ -163,6 +176,19 @@ def test_post_result_view_reroutes_with_new_query(dummy_request):
     result = result_view(dummy_request)
 
     assert 'test' and 'seattle' in result.location
+
+
+def test_post_home_view_with_no_query(dummy_request):
+    """Test only one query with only searchterm filled."""
+    from octojobs.views.default import home_view
+
+    dummy_request.method = "POST"
+    dummy_request.POST["location"] = ""
+    dummy_request.POST["searchbar"] = ""
+
+    result = home_view(dummy_request)
+
+    assert result.location == 'http://example.com/'
 
 
 # ============= FUNTIONAL TESTS =====================
