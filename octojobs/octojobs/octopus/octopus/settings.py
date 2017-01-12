@@ -21,8 +21,6 @@ NEWSPIDER_MODULE = 'octopus.spiders'
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 USER_AGENT = ua.random
 
-
-
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False
 
@@ -64,10 +62,10 @@ DATABASE = {
 
 # Enable or disable spider middlewares
 # See http://scrapy.readthedocs.org/en/latest/topics/spider-middleware.html
-SPIDER_MIDDLEWARES = {
+# SPIDER_MIDDLEWARES = {
    # 'octopus.middlewares.OctopusSpiderMiddleware': 543,
    # 'scrapy.spidermiddlewares.offsite.OffsiteMiddleware': None
-}
+# }
 
 # Enable or disable downloader middlewares
 # See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
