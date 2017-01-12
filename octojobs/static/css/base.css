@@ -2,6 +2,14 @@
     list-style: none;
 }
 
-nav {
-    /*display: inline;*/
+body {
+    background-color: #428bca;
+}
+
+.outer-color {
+    background-color: white;
+}
+
+.inner-color {
+    padding: 5%;
 }
