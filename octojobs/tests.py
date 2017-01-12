@@ -9,6 +9,8 @@ from pyramid import testing
 from pyramid.httpexceptions import HTTPFound
 import pytest
 import transaction
+# import unittest.mock
+# import requests
 
 fake = faker.Faker()
 
@@ -213,7 +215,6 @@ def test_post_result_view_with_no_query(dummy_request):
     assert result_view(dummy_request) == {'no_query': 'no result'}
 
 
-
 # ============= FUNTIONAL TESTS =====================
 
 
@@ -277,22 +278,113 @@ def spider():
 
 
 @pytest.fixture(scope="session")
-def test_dict():
-    """Create an empty dictionary."""
+def empty_test_dict():
+    """Create an empty dictionary for tests."""
     return {}
 
 
-def test_create_empty_dict(testapp, spider, test_dict):
+@pytest.fixture(scope="session")
+def full_test_dict():
+    """Create a full dictionary for tests."""
+    return {"http:://www.example.com": {
+            'city': "Seattle, WA",
+            'company': "Google",
+            'description': "This is a job.",
+            'title': "Job",
+            'url': "http:://www.example.com"}}
+
+
+@pytest.fixture(scope="session")
+def none_test_dict():
+    """Create a dictionary with none values for testing."""
+    return {None: {
+            'city': None,
+            'company': None,
+            'description': None,
+            'title': None,
+            'url': None}}
+
+
+def test_create_empty_dict(testapp, spider, empty_test_dict, none_test_dict):
     """Test that create dict method returns null values in dict when empty."""
-    assert spider.create_dict(test_dict) == {None: {'city': None, 'company': None, 'description': None, 'title': None, 'url': None}}
+    assert spider.create_dict(empty_test_dict) == none_test_dict
 
 
-def test_create_full_dict(testapp, spider, test_dict):
+def test_create_OctopusItem_instance_empty_values(testapp,
+                                                  spider,
+                                                  empty_test_dict,
+                                                  none_test_dict):
+    """Input a dict with missing values.
+    Test that you still create an OctopusItem."""
+    items = {}
+    key = None
+    assert spider.build_items(items, empty_test_dict, key) == none_test_dict
+
+
+def test_create_OctopusItem_instance(testapp, spider, full_test_dict):
+    """Test that when you input a dict, it returns an OctopusItem."""
+    items = {}
+    spider.build_items(items, full_test_dict, "http:://www.example.com")
+    assert items["http:://www.example.com"]['city'] == 'Seattle, WA'
+
+
+def test_create_full_dict(testapp, spider, empty_test_dict):
     """Test that create dict method returns expected values when dict full."""
     url = "http:://www.example.com"
-    assert spider.create_dict(test_dict, title="Job", url=url, company="Google", city="Seattle, WA", description="This is a job.") == {"http:://www.example.com": {'city': "Seattle, WA", 'company': "Google", 'description': "This is a job.", 'title': "Job", 'url': "http:://www.example.com"}}
+    title = "Job"
+    company = "Google"
+    city = "Seattle, WA"
+    description = "This is a job."
+    new_dict = spider.create_dict(
+                empty_test_dict,
+                url=url,
+                title=title,
+                company=company,
+                city=city,
+                description=description)
+    assert new_dict[url]["title"] == "Job"
 
 
-# def test_create_OctopusItem_instance(testapp, spider, test_dict):
-#     """Test that when you input a dict, it returns an OctopusItem."""
-#     
+# def fake_html_file(file_name):
+#     """Return a filepath to a dummy html file for the spider to parse."""
+#     import os
+
+#     if not file_name[0] == '/':
+#         responses_dir = os.path.dirname(os.path.realpath(__file__))
+#         file_path = os.path.join(responses_dir, file_name)
+#     else:
+#         file_path = file_name
+#     file_content = open(file_path, 'r').read()
+
+#     return file_content
+
+
+# def mocked_requests_get(*args, **kwargs):
+#     """Create a mock request object for the spider to parse."""
+#     from unittest import mock
+
+#     class MockResponse:
+#         def __init__(self, responsebody, status_code):
+#             self.responsebody = responsebody
+#             self.status_code = status_code
+
+#         def body(self):
+#             return self.responsebody
+
+#     return MockResponse(fake_html_file(
+#         'tests/dummy_html/dice_list.html'), 200)
+
+
+# class TestParseDiceView(unittest.TestCase):
+#     """Test that running spider over html returns expected response."""
+#     from unittest import mock
+
+#     @mock.patch('requests.get', new_callable=mocked_requests_get)
+#     def test_fetch(self, mock_get):
+#         """Test that spider goes to the mock url and returns response."""
+#         from octopus.spiders.spider import JobSpider
+#         spider = JobSpider()
+
+#         self.assertEqual(spider.parse(
+#             mocked_requests_get), fake_html_file(
+#             'tests/dummy_html/dice_list.html'))
