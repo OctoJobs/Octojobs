@@ -228,22 +228,50 @@ def spider():
 
 
 @pytest.fixture(scope="session")
-def test_dict():
-    """Create an empty dictionary."""
+def empty_test_dict():
+    """Create an empty dictionary for tests."""
     return {}
 
 
-def test_create_empty_dict(testapp, spider, test_dict):
+@pytest.fixture(scope="session")
+def full_test_dict():
+    """Create a full dictionary for tests."""
+    return {"http:://www.example.com": {'city': "Seattle, WA", 'company': "Google", 'description': "This is a job.", 'title': "Job", 'url': "http:://www.example.com"}}
+
+
+@pytest.fixture(scope="session")
+def none_test_dict():
+    """Create a dictionary with none values for testing."""
+    return {None: {'city': None, 'company': None, 'description': None, 'title': None, 'url': None}}
+
+
+def test_create_empty_dict(testapp, spider, empty_test_dict, none_test_dict):
     """Test that create dict method returns null values in dict when empty."""
-    assert spider.create_dict(test_dict) == {None: {'city': None, 'company': None, 'description': None, 'title': None, 'url': None}}
+    assert spider.create_dict(empty_test_dict) == none_test_dict
 
 
-def test_create_full_dict(testapp, spider, test_dict):
+def test_create_OctopusItem_instance_empty_values(testapp, spider, empty_test_dict):
+    """Input a dict with missing values.
+    Test that you still create an OctopusItem."""
+    items = {}
+    empty_test_dict["http:://www.example.com"] = {}
+    spider.build_items(items, empty_test_dict, "http:://www.example.com")
+    assert items["http:://www.example.com"] == {}
+
+
+def test_create_OctopusItem_instance(testapp, spider, full_test_dict):
+    """Test that when you input a dict, it returns an OctopusItem."""
+    items = {}
+    spider.build_items(items, full_test_dict, "http:://www.example.com")
+    assert items["http:://www.example.com"]['city'] == 'Seattle, WA'
+
+
+def test_create_full_dict(testapp, spider, empty_test_dict):
     """Test that create dict method returns expected values when dict full."""
     url = "http:://www.example.com"
-    assert spider.create_dict(test_dict, title="Job", url=url, company="Google", city="Seattle, WA", description="This is a job.") == {"http:://www.example.com": {'city': "Seattle, WA", 'company': "Google", 'description': "This is a job.", 'title': "Job", 'url': "http:://www.example.com"}}
-
-
-# def test_create_OctopusItem_instance(testapp, spider, test_dict):
-#     """Test that when you input a dict, it returns an OctopusItem."""
-#     
+    title = "Job"
+    company = "Google"
+    city = "Seattle, WA"
+    description = "This is a job."
+    new_dict = spider.create_dict(empty_test_dict, url=url, title=title, company=company, city=city, description=description)
+    assert new_dict[url]["title"] == "Job"
