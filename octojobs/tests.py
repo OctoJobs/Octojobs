@@ -213,7 +213,6 @@ def test_post_result_view_with_no_query(dummy_request):
     assert result_view(dummy_request) == {'no_query': 'no result'}
 
 
-
 # ============= FUNTIONAL TESTS =====================
 
 
@@ -276,6 +275,39 @@ def spider():
     return spider
 
 
+def fake_response_from_file(file_name, url=None):
+    """
+    Create a Scrapy fake HTTP response from a HTML file
+    @param file_name: The relative filename from the responses directory,
+                      but absolute paths are also accepted.
+    @param url: The URL of the response.
+    returns: A scrapy HTTP response which can be used for unittesting.
+    """
+    import os
+    from scrapy.http import Response, Request
+
+    if not file_name[0] == '/':
+        responses_dir = os.path.dirname(os.path.realpath(__file__))
+        file_path = os.path.join(responses_dir, file_name)
+    else:
+        file_path = file_name
+
+    if not url:
+        url = 'http://www.example.com'
+
+    request = Request(url=url)
+    file_content = open(file_path, 'r').read()
+    body = file_content
+
+    response = Response(url=url,
+                        request=request,
+                        body=body)
+    response.body = file_content
+    
+    response.encoding = 'utf-8'
+    return response
+
+
 @pytest.fixture(scope="session")
 def empty_test_dict():
     """Create an empty dictionary for tests."""
@@ -285,13 +317,23 @@ def empty_test_dict():
 @pytest.fixture(scope="session")
 def full_test_dict():
     """Create a full dictionary for tests."""
-    return {"http:://www.example.com": {'city': "Seattle, WA", 'company': "Google", 'description': "This is a job.", 'title': "Job", 'url': "http:://www.example.com"}}
+    return {"http:://www.example.com": {
+            'city': "Seattle, WA",
+            'company': "Google",
+            'description': "This is a job.",
+            'title': "Job",
+            'url': "http:://www.example.com"}}
 
 
 @pytest.fixture(scope="session")
 def none_test_dict():
     """Create a dictionary with none values for testing."""
-    return {None: {'city': None, 'company': None, 'description': None, 'title': None, 'url': None}}
+    return {None: {
+            'city': None,
+            'company': None,
+            'description': None,
+            'title': None,
+            'url': None}}
 
 
 def test_create_empty_dict(testapp, spider, empty_test_dict, none_test_dict):
@@ -299,13 +341,15 @@ def test_create_empty_dict(testapp, spider, empty_test_dict, none_test_dict):
     assert spider.create_dict(empty_test_dict) == none_test_dict
 
 
-def test_create_OctopusItem_instance_empty_values(testapp, spider, empty_test_dict):
+def test_create_OctopusItem_instance_empty_values(testapp,
+                                                  spider,
+                                                  empty_test_dict,
+                                                  none_test_dict):
     """Input a dict with missing values.
     Test that you still create an OctopusItem."""
     items = {}
-    empty_test_dict["http:://www.example.com"] = {}
-    spider.build_items(items, empty_test_dict, "http:://www.example.com")
-    assert items["http:://www.example.com"] == {}
+    key = None
+    assert spider.build_items(items, none_test_dict, key) == none_test_dict
 
 
 def test_create_OctopusItem_instance(testapp, spider, full_test_dict):
@@ -322,5 +366,17 @@ def test_create_full_dict(testapp, spider, empty_test_dict):
     company = "Google"
     city = "Seattle, WA"
     description = "This is a job."
-    new_dict = spider.create_dict(empty_test_dict, url=url, title=title, company=company, city=city, description=description)
+    new_dict = spider.create_dict(
+                empty_test_dict,
+                url=url,
+                title=title,
+                company=company,
+                city=city,
+                description=description)
     assert new_dict[url]["title"] == "Job"
+
+
+def test_parse_dice_view(testapp, spider):
+    import pdb;pdb.set_trace()
+    results = list(spider.parse(fake_response_from_file('tests/dummy_html/dice_list.html')))
+    assert len(results) == 2
