@@ -2,10 +2,8 @@
 
 from pyramid.view import view_config
 from sqlalchemy import and_
-from pyramid.view import notfound_view_config
-from pyramid.response import Response
 
-from pyramid.httpexceptions import HTTPFound, HTTPNotFound
+from pyramid.httpexceptions import HTTPFound
 
 from ..models import Job
 
@@ -15,98 +13,96 @@ def home_view(request):
     """On initial load, shows search bar. On query submit, loads results."""
     if request.method == 'POST':
 
-        searchterm = request.POST['searchbar']
-        location = request.POST['location']
-
-        query = {}
-
-        if not location and searchterm:
-            query['search'] = searchterm
-            return redirect_search(request, query)
-
-        elif not searchterm and location:
-            query['location'] = location
-            return redirect_search(request, query)
-
-        elif searchterm and location:
-            query['location'] = location
-            query['search'] = searchterm
-            return redirect_search(request, query)
-
-        else:
-            return {'no_query': 'no result'}
+        return post_request(request)
 
     return {}
+
 
 def redirect_search(request, query):
     """Function to redirect to result page."""
     return HTTPFound(location=request.route_url('results', _query=query))
 
 
+def post_request(request):
+    """If post request on form, collect search terms."""
+    keyword = request.POST['searchbar']
+    location = request.POST['location']
+
+    search_terms = {}
+
+    if not location and keyword:
+        search_terms['search'] = keyword
+        return redirect_search(request, search_terms)
+
+    elif not keyword and location:
+        search_terms['location'] = location
+        return redirect_search(request, search_terms)
+
+    elif keyword and location:
+        search_terms['location'] = location
+        search_terms['search'] = keyword
+        return redirect_search(request, search_terms)
+
+    else:
+        return {'no_query': 'no result'}
+
+
 @view_config(route_name='results', renderer='../templates/results.jinja2')
 def result_view(request):
     """Generate results view."""
-
-    if request.GET.get('search'):
-        searchterm = '%' + request.GET.get('search') +'%'
-    else:
+    try:
+        searchterm = '%' + request.GET.get('search') + '%'
+    except TypeError:
         searchterm = None
 
-    if request.GET.get('location'):
-        location = '%' + request.GET.get('location') +'%'
-    else:
+    try:
+        location = '%' + request.GET.get('location') + '%'
+    except TypeError:
         location = None
 
-
     field_category = [Job.title, Job.company, Job.description]
+    db_query = request.dbsession.query(Job)
 
     if request.method == 'GET':
         if location and searchterm:
             for field in field_category:
-                qr = request.dbsession.query(Job).filter(and_(Job.city.ilike(location), field.ilike(searchterm)))
+                qr = db_query.filter(and_(
+                    Job.city.ilike(location),
+                    field.ilike(searchterm)
+                ))
                 if qr.count() > 0:
-                    query = request.dbsession.query(Job).filter(and_(Job.city.ilike(location), field.ilike(searchterm)))
+                    query = db_query.filter(and_(
+                        Job.city.ilike(location),
+                        field.ilike(searchterm))
+                    )
                     break
                 return {'failed_search': 'No results'}
 
         elif searchterm and location is None:
             field_category.append(Job.city)
             for field in field_category:
-                qr = request.dbsession.query(Job).filter(field.ilike(searchterm))
+                qr = db_query.filter(
+                    field.ilike(searchterm)
+                )
                 if qr.count() > 0:
-                    query = request.dbsession.query(Job).filter(field.ilike(searchterm))
+                    query = db_query.filter(
+                        field.ilike(searchterm)
+                    )
                     break
                 return {'failed_search': 'No results'}
 
         elif location and searchterm is None:
-            qr = request.dbsession.query(Job).filter(Job.city.ilike(location))
+            qr = db_query.filter(Job.city.ilike(location))
             if qr.count() > 0:
-                query = request.dbsession.query(Job).filter(Job.city.ilike(location))
+                query = db_query.filter(
+                    Job.city.ilike(location)
+                )
             else:
                 return {'failed_search': 'No results'}
 
     if request.method == 'POST':
 
-        searchterm = request.POST['searchbar']
-        location = request.POST['location']
-
-        query = {}
-
-        if not location and searchterm:
-            query['search'] = searchterm
-            return redirect_search(request, query)
-
-        elif not searchterm and location:
-            query['location'] = location
-            return redirect_search(request, query)
-
-        elif searchterm and location:
-            query['location'] = location
-            query['search'] = searchterm
-            return redirect_search(request, query)
-
-        else:
-            return {'no_query': 'no result'}
+        return post_request(request)
 
     return {'results': query}
 
