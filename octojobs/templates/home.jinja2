@@ -15,13 +15,14 @@
                 </div>
             </div>
         </section>
-        </section>
-        {% if results == 'no result' %}
-        <h1>You need to enter something.</h1>
-        <img id="mad_octo" src="{{request.static_url('octojobs:static/mad_octo.jpg')}}"/>
+    </section>
+    <section>
+        {% if no_query == 'no result' %}
+            <h1>You need to enter something.</h1>
+            <img id="mad_octo" src="{{request.static_url('octojobs:static/mad_octo.jpg')}}"/>
         {% elif failed_search == "No results" %}
-        <h1>We found nothing. Search again, please.</h1>
-        <img id="sad_octo" src="{{request.static_url('octojobs:static/sad_octo.jpg')}}"/>
+            <h1>We found nothing. Search again, please.</h1>
+            <img id="sad_octo" src="{{request.static_url('octojobs:static/sad_octo.jpg')}}"/>
         {% endif %}
     </section>
 {% endblock %}
