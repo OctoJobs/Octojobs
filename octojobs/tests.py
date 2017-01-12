@@ -1,7 +1,6 @@
 """The test module for the Octojobs project."""
 
 import faker
-from octojobs.models import mymodel
 from octojobs.models import Job
 from octojobs.models import get_tm_session
 from octojobs.models.meta import Base
@@ -213,15 +212,24 @@ def test_post_result_view_with_no_query(dummy_request):
     assert result_view(dummy_request) == {'no_query': 'no result'}
 
 
-def test_post_with_location_and_kw_with_no_result(dummy_request):
-    """Test when no hit comes back from valid search."""
-    from octojobs.views.default import result_view
+def test_post_result_view_searchterm_is_confirmed(dummy_request):
+    """Test posting from results that search term is confirmed."""
 
     dummy_request.method = "POST"
-    dummy_request.POST["searchbar"] == "hjgdkgd"
-    dummy_request.POST["location"] == "NDGHFAS"
+    dummy_request.POST["searchbar"] = "joe"
+    dummy_request.POST["location"] = ""
 
-    assert result_view(dummy_request) == {'failed_search': 'no result'}
+    assert dummy_request.GET.get('search') == "joe"
+
+def test_post_result_view_searchterm_is_confirmed(dummy_request):
+    """Test posting from results that search term is confirmed."""
+
+    dummy_request.method = "POST"
+    dummy_request.POST["searchbar"] = "joe"
+    dummy_request.POST["location"] = "new york"
+
+    assert dummy_request.GET.get('location') == "new york"
+
 
 # ============= FUNTIONAL TESTS =====================
 
@@ -304,4 +312,3 @@ def test_create_full_dict(testapp, spider, test_dict):
 
 # def test_create_OctopusItem_instance(testapp, spider, test_dict):
 #     """Test that when you input a dict, it returns an OctopusItem."""
-#     
