@@ -9,6 +9,8 @@ from pyramid import testing
 from pyramid.httpexceptions import HTTPFound
 import pytest
 import transaction
+# import unittest.mock
+# import requests
 
 fake = faker.Faker()
 
@@ -275,39 +277,6 @@ def spider():
     return spider
 
 
-def fake_response_from_file(file_name, url=None):
-    """
-    Create a Scrapy fake HTTP response from a HTML file
-    @param file_name: The relative filename from the responses directory,
-                      but absolute paths are also accepted.
-    @param url: The URL of the response.
-    returns: A scrapy HTTP response which can be used for unittesting.
-    """
-    import os
-    from scrapy.http import Response, Request
-
-    if not file_name[0] == '/':
-        responses_dir = os.path.dirname(os.path.realpath(__file__))
-        file_path = os.path.join(responses_dir, file_name)
-    else:
-        file_path = file_name
-
-    if not url:
-        url = 'http://www.example.com'
-
-    request = Request(url=url)
-    file_content = open(file_path, 'r').read()
-    body = file_content
-
-    response = Response(url=url,
-                        request=request,
-                        body=body)
-    response.body = file_content
-    
-    response.encoding = 'utf-8'
-    return response
-
-
 @pytest.fixture(scope="session")
 def empty_test_dict():
     """Create an empty dictionary for tests."""
@@ -349,7 +318,7 @@ def test_create_OctopusItem_instance_empty_values(testapp,
     Test that you still create an OctopusItem."""
     items = {}
     key = None
-    assert spider.build_items(items, none_test_dict, key) == none_test_dict
+    assert spider.build_items(items, empty_test_dict, key) == none_test_dict
 
 
 def test_create_OctopusItem_instance(testapp, spider, full_test_dict):
@@ -376,7 +345,46 @@ def test_create_full_dict(testapp, spider, empty_test_dict):
     assert new_dict[url]["title"] == "Job"
 
 
-def test_parse_dice_view(testapp, spider):
-    import pdb;pdb.set_trace()
-    results = list(spider.parse(fake_response_from_file('tests/dummy_html/dice_list.html')))
-    assert len(results) == 2
+# def fake_html_file(file_name):
+#     """Return a filepath to a dummy html file for the spider to parse."""
+#     import os
+
+#     if not file_name[0] == '/':
+#         responses_dir = os.path.dirname(os.path.realpath(__file__))
+#         file_path = os.path.join(responses_dir, file_name)
+#     else:
+#         file_path = file_name
+#     file_content = open(file_path, 'r').read()
+
+#     return file_content
+
+
+# def mocked_requests_get(*args, **kwargs):
+#     """Create a mock request object for the spider to parse."""
+#     from unittest import mock
+
+#     class MockResponse:
+#         def __init__(self, responsebody, status_code):
+#             self.responsebody = responsebody
+#             self.status_code = status_code
+
+#         def body(self):
+#             return self.responsebody
+
+#     return MockResponse(fake_html_file(
+#         'tests/dummy_html/dice_list.html'), 200)
+
+
+# class TestParseDiceView(unittest.TestCase):
+#     """Test that running spider over html returns expected response."""
+#     from unittest import mock
+
+#     @mock.patch('requests.get', new_callable=mocked_requests_get)
+#     def test_fetch(self, mock_get):
+#         """Test that spider goes to the mock url and returns response."""
+#         from octopus.spiders.spider import JobSpider
+#         spider = JobSpider()
+
+#         self.assertEqual(spider.parse(
+#             mocked_requests_get), fake_html_file(
+#             'tests/dummy_html/dice_list.html'))

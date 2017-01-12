@@ -23,7 +23,8 @@ requires = [
     'passlib',
     'scrapy',
     'fake-useragent',
-    'cffi'
+    'cffi',
+    'requests',
 ]
 
 tests_require = [
@@ -33,7 +34,8 @@ tests_require = [
     'tox',
     'faker',
     'scrapy',
-    'fake-useragent'
+    'fake-useragent',
+    'unittest'
 ]
 
 setup(name='octojobs',
