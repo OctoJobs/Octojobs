@@ -152,6 +152,17 @@ def test_post_home_view_with_only_searchterm_query(dummy_request):
     assert result.location == 'http://example.com/results?search=developer'
 
 
+def test_post_home_view_with_no_query(dummy_request):
+    """Test only no queries on the home form are passed on url."""
+    from octojobs.views.default import home_view
+
+    dummy_request.method = "POST"
+    dummy_request.POST["location"] = ""
+    dummy_request.POST["searchbar"] = ""
+
+    assert home_view(dummy_request) == {'no_query': 'no result'}
+
+
 def test_post_result_view_reroutes_with_new_query(dummy_request):
     """Assert search terms are passed on url on result view."""
     from octojobs.views.default import result_view
@@ -163,6 +174,44 @@ def test_post_result_view_reroutes_with_new_query(dummy_request):
     result = result_view(dummy_request)
 
     assert 'test' and 'seattle' in result.location
+
+
+def test_post_results_view_with_location_query(dummy_request):
+    """Test only one query with only location filled."""
+    from octojobs.views.default import result_view
+
+    dummy_request.method = "POST"
+    dummy_request.POST["location"] = "seattle"
+    dummy_request.POST["searchbar"] = ""
+
+    result = result_view(dummy_request)
+
+    assert result.location == 'http://example.com/results?location=seattle'
+
+
+def test_post_result_view_with_search_query_only(dummy_request):
+    """Test only one query with only search filled."""
+    from octojobs.views.default import result_view
+
+    dummy_request.method = "POST"
+    dummy_request.POST["location"] = ""
+    dummy_request.POST["searchbar"] = "test"
+
+    result = result_view(dummy_request)
+
+    assert result.location == 'http://example.com/results?search=test'
+
+
+def test_post_result_view_with_no_query(dummy_request):
+    """Test only no queries on the home form are passed on url."""
+    from octojobs.views.default import result_view
+
+    dummy_request.method = "POST"
+    dummy_request.POST["location"] = ""
+    dummy_request.POST["searchbar"] = ""
+
+    assert result_view(dummy_request) == {'no_query': 'no result'}
+
 
 
 # ============= FUNTIONAL TESTS =====================
