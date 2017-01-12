@@ -61,7 +61,6 @@ def result_view(request):
     field_category = [Job.title, Job.company, Job.description]
 
     if request.method == 'GET':
-        # import pdb; pdb.set_trace()
         if location and searchterm:
             for field in field_category:
                 qr = request.dbsession.query(Job).filter(and_(Job.city.ilike(location), field.ilike(searchterm)))
@@ -116,13 +115,3 @@ def result_view(request):
 def about_view(request):
     """Show basic about us view."""
     return {}
-
-
-@notfound_view_config(renderer='../templates/404.jinja2')
-def notfound(request):
-    """Custom 404 error view."""
-    return Response('Not found!', status='404 Not Found')
-
-# def main(globals, **settings):
-#     config = Configurator()
-#     config.scan()
