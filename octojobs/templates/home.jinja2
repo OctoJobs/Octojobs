@@ -16,7 +16,7 @@
             </div>
         </section>
         </section>
-        {% if results == 'no result' %}
+        {% if no_query == 'no result' %}
         <h1>You need to enter something.</h1>
         <img id="mad_octo" src="{{request.static_url('octojobs:static/mad_octo.jpg')}}"/>
         {% elif failed_search == "No results" %}
