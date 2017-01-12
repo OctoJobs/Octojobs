@@ -5,8 +5,9 @@
         <section id="searchbar" class="row">
             <div class="col-lg-6">
                 <div class="input-group">
-                    <form method="POST">
-                        <input type="text" class="form-control" name="searchbar" placeholder="Search for...">
+                    <form method="POST" size=300px>
+                        <input type="text" id="keyword" name="searchbar" placeholder="Search for..."/>
+                        <input type="text" id="location" name="location" placeholder="Location"/>
                         <span class="input-group-btn">
                         <button class="btn btn-default" type="submit">Go!</button>
                         </span>
@@ -15,12 +16,12 @@
             </div>
         </section>
         </section>
-            {% if results %}
-            <section id="results" class="col-lg-6 col-lg-offset-3">
-                {{ results.title }}
-                {{ results.city }}
-                {{ results.description }}
-            </section>
-            {% endif %}
+        {% if results == 'no result' %}
+        <h1>You need to enter something.</h1>
+        <img id="mad_octo" src="{{request.static_url('octojobs:static/mad_octo.jpg')}}"/>
+        {% elif failed_search == "No results" %}
+        <h1>We found nothing. Search again, please.</h1>
+        <img id="sad_octo" src="{{request.static_url('octojobs:static/sad_octo.jpg')}}"/>
+        {% endif %}
     </section>
 {% endblock %}

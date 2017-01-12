@@ -9,12 +9,12 @@
     <link rel="shortcut icon" href="{{request.static_url('octojobs:static/pyramid-16x16.png')}}">
 
     <title>Octojobs</title>
+    <!-- Custom styles for this scaffold -->
+    <link href="{{request.static_url('octojobs:static/css/base.css')}}" rel="stylesheet">
 
     <!-- Bootstrap core CSS -->
     <link href="//oss.maxcdn.com/libs/twitter-bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Custom styles for this scaffold -->
-    <link href="{{request.static_url('octojobs:static/css/base.css')}}" rel="stylesheet">
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -26,11 +26,11 @@
     <body class="container">
       <header class="row">
           <!-- <img id="logo" class="col-lg-1 col-lg-offset-2" src={{ request.static_url('octojobs:static/images/logo.jpg') }} -->
-          <h1 class="col-lg-6 col-lg-offset-4"><a href={{ request.route_url('home') }}>OctoJobs</a></h1>
           <nav>
-              <ul>
-                  <li><a href={{ request.route_url('about') }}>About</a></li>
-              </ul>
+            <ul id="ul_nav">
+                <li><h1 class="col-lg-6 col-lg-offset-4"><a href={{ request.route_url('home') }}>OctoJobs</a></h1></li>
+                <li class="col-lg-1 col-lg-offset-3" id="about"><a href={{ request.route_url('about') }}>About</a></li>
+            </ul>
           </nav>
       </header>
       {% block body %}

@@ -24,14 +24,17 @@ requires = [
     'scrapy',
     'fake-useragent',
     'cffi'
-    ]
+]
 
 tests_require = [
     'WebTest >= 1.3.1',  # py3 compat
     'pytest',  # includes virtualenv
     'pytest-cov',
-    'tox'
-    ]
+    'tox',
+    'faker',
+    'scrapy',
+    'fake-useragent'
+]
 
 setup(name='octojobs',
       version='0.1',

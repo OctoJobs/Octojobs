@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
 python setup.py develop
-initialize_db production.ini
+# initialize_db production.ini
+# scrapy crawl jobs
 python runapp.py
