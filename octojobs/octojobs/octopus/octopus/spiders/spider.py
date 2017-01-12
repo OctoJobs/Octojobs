@@ -27,9 +27,7 @@ class JobSpider(scrapy.Spider):
     name = "jobs"
 
     start_urls = [
-        # 'file:///Users/rachaelwisecarver/codefellows/401/octojobs/Octojobs/octojobs/octojobs/octopus/indeed_list_view.html'
-        # 'file:///Users/rachaelwisecarver/codefellows/401/octojobs/Octojobs/octojobs/octojobs/octopus/dice_list_view.html',
-        'https://www.indeed.com/jobs?q=python&l=seattle%2C+wa',
+        # 'https://www.indeed.com/jobs?q=python&l=seattle%2C+wa',
         # 'https://www.indeed.com/jobs?q=javascript&l=seattle%2C+wa',
         # 'https://www.indeed.com/jobs?q=ios&l=seattle%2C+wa',
         # 'https://www.indeed.com/jobs?q=back+end&l=seattle%2C+wa',
@@ -50,12 +48,12 @@ class JobSpider(scrapy.Spider):
         # 'https://www.indeed.com/jobs?q=front+end&l=New+York%2C+NY',
         # 'https://www.indeed.com/jobs?q=full+stack&l=New+York%2C+NY',
         # 'https://www.indeed.com/jobs?q=data+scientist&l=New+York%2C+NY',
-        'https://www.dice.com/jobs?q=&l=seattle%2C+WA',
+        # 'https://www.dice.com/jobs?q=&l=seattle%2C+WA',
         # 'https://www.dice.com/jobs?q=&l=San+Francisco+Bay+Area%2C+CA',
         # 'https://www.dice.com/jobs?q=&l=New+York%2C+NY',
     ]
 
-    def create_dict(self, empty_dict, url, title, company, city, description):
+    def create_dict(self, empty_dict, url=None, title=None, company=None, city=None, description=None):
         """Takes in an empty dictionary, and the items pulled from html.
         Creates a new dictionary within that dictionary holding these items."""
         empty_dict[url] = {}
@@ -142,9 +140,7 @@ class JobSpider(scrapy.Spider):
 
             for element in response.css('div.serp-result-content'):
                 """Grab items using css selectors and x-paths."""
-                # import pdb;pdb.set_trace()
                 anchor = element.css('a.dice-btn-link').extract_first()
-                # title = re.search(r'title="([^"]*)"', anchor).group(1)
                 title = element.css(
                     'a.dice-btn-link.loggedInVisited::text').extract_first()
                 url = re.search(
@@ -169,7 +165,7 @@ class JobSpider(scrapy.Spider):
             for key in dice_company_dict:
                 yield scrapy.Request(key)
 
-                if not response.xpath('//*[@id="bd"]'):
+                if not response.css('div.highlight-black::text'):
                     self.build_items(items, dice_company_dict, key)
                     continue
 

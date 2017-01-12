@@ -1,13 +1,14 @@
 """The test module for the Octojobs project."""
 
-import transaction
-import pytest
+import faker
+from octojobs.models import mymodel
 from octojobs.models import Job
 from octojobs.models import get_tm_session
 from octojobs.models.meta import Base
-import faker
 from pyramid import testing
-
+from pyramid.httpexceptions import HTTPFound
+import pytest
+import transaction
 
 fake = faker.Faker()
 
@@ -65,6 +66,7 @@ def db_session(configuration, request):
     return session
 
 
+@pytest.fixture
 def dummy_request(db_session):
     """It creates a fake HTTP Request and database session.
 
@@ -92,9 +94,81 @@ def test_new_jobs_are_added(db_session):
     assert len(query) == len(DUMMY_JOBS)
 
 
+def test_get_home_view_is_empty_dict(dummy_request):
+    """Assert empty dict is returned, from Get request."""
+    from octojobs.views.default import home_view
+    assert home_view(dummy_request) == {}
+
+
+def test_post_home_view_is_http_found(dummy_request):
+    """Assert is instance of HTTP found, from POST request."""
+    from octojobs.views.default import home_view
+
+    dummy_request.method = "POST"
+    dummy_request.POST["searchbar"] = "test"
+    dummy_request.POST["location"] = "seattle"
+
+    result = home_view(dummy_request)
+
+    assert isinstance(result, HTTPFound)
+
+
+def test_post_home_view_reroutes_with_query(dummy_request):
+    """Assert search terms are passed on url."""
+    from octojobs.views.default import home_view
+
+    dummy_request.method = "POST"
+    dummy_request.POST["searchbar"] = "test"
+    dummy_request.POST["location"] = "seattle"
+
+    result = home_view(dummy_request)
+
+    assert 'test' and 'seattle' in result.location
+
+
+def test_post_home_view_with_only_location_query(dummy_request):
+    """Test only one query with only location filled."""
+    from octojobs.views.default import home_view
+
+    dummy_request.method = "POST"
+    dummy_request.POST["location"] = "seattle"
+    dummy_request.POST["searchbar"] = ""
+
+    result = home_view(dummy_request)
+
+    assert result.location == 'http://example.com/results?location=seattle'
+
+
+def test_post_home_view_with_only_searchterm_query(dummy_request):
+    """Test only one query with only searchterm filled."""
+    from octojobs.views.default import home_view
+
+    dummy_request.method = "POST"
+    dummy_request.POST["location"] = ""
+    dummy_request.POST["searchbar"] = "developer"
+
+    result = home_view(dummy_request)
+
+    assert result.location == 'http://example.com/results?search=developer'
+
+
+def test_post_result_view_reroutes_with_new_query(dummy_request):
+    """Assert search terms are passed on url on result view."""
+    from octojobs.views.default import result_view
+
+    dummy_request.method = "POST"
+    dummy_request.POST["searchbar"] = "test"
+    dummy_request.POST["location"] = "seattle"
+
+    result = result_view(dummy_request)
+
+    assert 'test' and 'seattle' in result.location
+
+
 # ============= FUNTIONAL TESTS =====================
 
-@pytest.fixture
+
+@pytest.fixture(scope="session")
 def testapp(request):
     """The fixture creates a test app."""
     from webtest import TestApp
@@ -102,6 +176,7 @@ def testapp(request):
 
     def main(global_config, **settings):
         """The function returns a Pyramid WSGI application."""
+        settings["sqlalchemy.url"] = 'postgres:///test_jobs'
         config = Configurator(settings=settings)
         config.include('pyramid_jinja2')
         config.include('.models')
@@ -109,9 +184,7 @@ def testapp(request):
         config.scan()
         return config.make_wsgi_app()
 
-    app = main({}, **{
-        "sqlalchemy.url": 'postgres:///test_jobs'
-    })
+    app = main({}, **{})
     testapp = TestApp(app)
 
     SessionFactory = app.registry["dbsession_factory"]
@@ -141,3 +214,36 @@ def fill_the_db(testapp):
 #     response = testapp.get('results', method="POST", location="Seattle")
 #     html = response.html
 #     assert html.find_all("Windows") is True
+
+
+# ============= SPIDER TESTS =====================
+
+
+@pytest.fixture(scope="session")
+def spider():
+    """Create a JobSpider fixture to run through your code."""
+    from octopus.spiders.spider import JobSpider
+    spider = JobSpider()
+    return spider
+
+
+@pytest.fixture(scope="session")
+def test_dict():
+    """Create an empty dictionary."""
+    return {}
+
+
+def test_create_empty_dict(testapp, spider, test_dict):
+    """Test that create dict method returns null values in dict when empty."""
+    assert spider.create_dict(test_dict) == {None: {'city': None, 'company': None, 'description': None, 'title': None, 'url': None}}
+
+
+def test_create_full_dict(testapp, spider, test_dict):
+    """Test that create dict method returns expected values when dict full."""
+    url = "http:://www.example.com"
+    assert spider.create_dict(test_dict, title="Job", url=url, company="Google", city="Seattle, WA", description="This is a job.") == {"http:://www.example.com": {'city': "Seattle, WA", 'company': "Google", 'description': "This is a job.", 'title': "Job", 'url': "http:://www.example.com"}}
+
+
+# def test_create_OctopusItem_instance(testapp, spider, test_dict):
+#     """Test that when you input a dict, it returns an OctopusItem."""
+#     
