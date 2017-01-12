@@ -1,14 +1,16 @@
 """The test module for the Octojobs project."""
 
-import transaction
-import pytest
+import faker
 from octojobs.models import Job
 from octojobs.models import get_tm_session
 from octojobs.models.meta import Base
-import faker
+import octopus
+import os
 from pyramid import testing
 from pyramid.httpexceptions import HTTPFound
-
+import pytest
+from scrapy.http import Response, Request
+import transaction
 
 fake = faker.Faker()
 
@@ -215,3 +217,51 @@ def fill_the_db(testapp):
 #     response = testapp.get('results', method="POST", location="Seattle")
 #     html = response.html
 #     assert html.find_all("Windows") is True
+
+
+# ============= SPIDER TESTS =====================
+
+
+@pytest.fixture
+def spider():
+    """Create a JobSpider fixture to run through your code."""
+    from octopus.spiders.spider import JobSpider
+    spider = JobSpider()
+    return spider
+
+
+def fake_response_from_file(file_name, url=None):
+    """
+    Create a Scrapy fake HTTP response from a HTML file
+    file_name: The relative filename from the responses directory,
+                      but absolute paths are also accepted.
+    url: The URL of the response.
+    returns: A scrapy HTTP response which can be used for unittesting.
+    Based on: http://stackoverflow.com/questions/6456304/scrapy-unit-testing/12741030#12741030.
+    """
+    if not url:
+        url = 'https://www.dice.com/jobs?q=&l=seattle%2C+WA'
+
+    request = Request(url=url)
+    if not file_name[0] == '/':
+        responses_dir = os.path.dirname(os.path.realpath(__file__))
+        file_path = os.path.join(responses_dir, file_name)
+    else:
+        file_path = file_name
+
+    file_content = open(file_path, 'r').read()
+
+    response = Response(
+        url=url,
+        request=request,
+        body=file_content
+        )
+    response.encoding = 'utf-8'
+    return response
+
+
+def test_parse(spider):
+    results = spider.parse(fake_response_from_file(
+        "dummy_html/dice.html"))
+    import pdb;pdb.set_trace()
+    assert len(results) == 1
