@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 from fake_useragent import UserAgent
+import os
+
 ua = UserAgent()
 # Scrapy settings for octopus project
 #
@@ -38,12 +40,19 @@ CONCURRENT_REQUESTS_PER_IP = 16
 # Disable cookies (enabled by default)
 COOKIES_ENABLED = False
 
+# Set up Database
+
 DATABASE = {
     'drivername': 'postgres',
-    'host': 'localhost',
+    # 'host': 'localhost',
+    'host': os.environ["DATABASE_URL"],
     'port': '5432',
-    'database': 'octojobs'
+    'username': 'nupuvbtqqrqeww',
+    'password': os.environ["PASSWORD"],
+    'database': 'd3r8gpjvd7ucvv',
+    # 'database': 'octojobs'
 }
+
 # Disable Telnet Console (enabled by default)
 #TELNETCONSOLE_ENABLED = False
 
