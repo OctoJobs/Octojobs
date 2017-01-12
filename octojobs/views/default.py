@@ -1,7 +1,9 @@
 """Render views from configurations."""
 
 from pyramid.view import view_config
-from sqlalchemy import or_, and_
+from sqlalchemy import and_
+from pyramid.view import notfound_view_config
+from pyramid.response import Response
 
 from pyramid.httpexceptions import HTTPFound, HTTPNotFound
 
@@ -32,7 +34,7 @@ def home_view(request):
             return redirect_search(request, query)
 
         else:
-            return {'results': 'no result'}
+            return {'no_query': 'no result'}
 
     return {}
 
@@ -59,13 +61,14 @@ def result_view(request):
     field_category = [Job.title, Job.company, Job.description]
 
     if request.method == 'GET':
+        # import pdb; pdb.set_trace()
         if location and searchterm:
             for field in field_category:
                 qr = request.dbsession.query(Job).filter(and_(Job.city.ilike(location), field.ilike(searchterm)))
                 if qr.count() > 0:
                     query = request.dbsession.query(Job).filter(and_(Job.city.ilike(location), field.ilike(searchterm)))
-                break
-            return {'failed_search': 'No results'}
+                    break
+                return {'failed_search': 'No results'}
 
         elif searchterm and location is None:
             field_category.append(Job.city)
@@ -73,14 +76,15 @@ def result_view(request):
                 qr = request.dbsession.query(Job).filter(field.ilike(searchterm))
                 if qr.count() > 0:
                     query = request.dbsession.query(Job).filter(field.ilike(searchterm))
-                break
-            return {'failed_search': 'No results'}
+                    break
+                return {'failed_search': 'No results'}
 
         elif location and searchterm is None:
             qr = request.dbsession.query(Job).filter(Job.city.ilike(location))
             if qr.count() > 0:
                 query = request.dbsession.query(Job).filter(Job.city.ilike(location))
-            return {'failed_search': 'No results'}
+            else:
+                return {'failed_search': 'No results'}
 
     if request.method == 'POST':
 
@@ -103,7 +107,7 @@ def result_view(request):
             return redirect_search(request, query)
 
         else:
-            return {'results': 'no result'}
+            return {'no_query': 'no result'}
 
     return {'results': query}
 
@@ -112,3 +116,13 @@ def result_view(request):
 def about_view(request):
     """Show basic about us view."""
     return {}
+
+
+@notfound_view_config(renderer='../templates/404.jinja2')
+def notfound(request):
+    """Custom 404 error view."""
+    return Response('Not found!', status='404 Not Found')
+
+# def main(globals, **settings):
+#     config = Configurator()
+#     config.scan()

@@ -9,4 +9,3 @@ def includeme(config):
     config.add_route('results', '/results')
     config.add_route('no_search', '/no_search')
     config.add_route('no_results', '/no_results')
-    # config.add_route('404', '/404')
