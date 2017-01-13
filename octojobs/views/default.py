@@ -64,8 +64,6 @@ def result_view(request):
     except TypeError:
         location = None
 
-    import pdb; pdb.set_trace()
-
     field_category = [Job.title, Job.company, Job.description]
     db_query = request.dbsession.query(Job)
 
