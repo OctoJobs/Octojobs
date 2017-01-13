@@ -385,8 +385,7 @@ def test_the_home_page_has_a_form(testapp):
 
 def test_the_results_page_has_a_form(testapp):
     """The results page has 2 input boxes."""
-    import pdb; pdb.set_trace()
-    response = testapp.get('/results?search=Python', status=302)
+    response = testapp.get('/results?search=Python', status=200)
     html = response.html
     assert html.find_all("form")
 
