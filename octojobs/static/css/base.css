@@ -51,7 +51,7 @@ a {
 }
 
 a:hover {
-    color: #2B4F71;
+    color: #9AE6C8;
     text-decoration: none;
 }
 
@@ -135,6 +135,7 @@ main {
 #keyword {
     margin-bottom: 20px;
 }
+
 button {
     margin: 20px;
     width: 60px;
