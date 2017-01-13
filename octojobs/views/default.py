@@ -54,6 +54,8 @@ def result_view(request):
 
         return post_request(request)
 
+    # import pdb; pdb.set_trace()
+
     try:
         searchterm = '%' + request.GET.get('search') + '%'
     except TypeError:
@@ -64,9 +66,7 @@ def result_view(request):
     except TypeError:
         location = None
 
-    import pdb; pdb.set_trace()
-
-    field_category = [Job.title, Job.company, Job.description]
+    field_category = [Job.description, Job.title, Job.company]
     db_query = request.dbsession.query(Job)
 
     if location and searchterm:
@@ -78,7 +78,7 @@ def result_view(request):
             ))
             if filter_query.count() > 0:
                 search_hit = filter_query
-
+                break
         if filter_query.count() == 0:
             return {'failed_search': 'No results'}
 
