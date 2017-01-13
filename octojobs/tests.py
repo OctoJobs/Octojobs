@@ -383,11 +383,19 @@ def test_the_home_page_has_a_form(testapp):
     assert html.find_all("form")
 
 
+<<<<<<< HEAD
 # def test_the_results_page_has_a_form(testapp):
 #     """The results page has 2 input boxes."""
 #     response = testapp.get('/results?search=Python', status=302)
 #     html = response.html
 #     assert html.find_all("form")
+=======
+def test_the_results_page_has_a_form(testapp):
+    """The results page has 2 input boxes."""
+    response = testapp.get('/results?search=Python', status=200)
+    html = response.html
+    assert html.find_all("form")
+>>>>>>> 82f5e9f74b15266278bb509df85b1356e618a02f
 
 
 def test_the_home_page_has_two_input_boxes(testapp):
