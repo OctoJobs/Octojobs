@@ -29,7 +29,7 @@ footer, header, hgroup, menu, nav, section {
 
 * {
     background-color: white;
-    color: #2c2f33;
+    color: #234863;
 }
 
 
@@ -46,20 +46,20 @@ ol, ul {
 }
 
 a {
-    color: #0E376F;
+    color: #234863;
     text-decoration: none;
 }
 
 a:hover {
-    color: #9AE6C8;
+    color: #6F8FAC;
     text-decoration: none;
 }
 
 html {
     margin:0 auto 0 auto;
-    border:5px solid #0E376F;
+    border:15px solid #325877;
     background:#ffffff; 
-    height: 200%;
+    height: 250%;
 }
 
 .jumbotron {
@@ -83,6 +83,7 @@ html {
 
 
 h1 {
+    margin-top: 30px;
     text-align: center;
     font-size: 40px;
     font-family: "Futura", sans-serif;
@@ -141,6 +142,9 @@ button {
     width: 60px;
 }
 
+.btn:hover {
+    background-color:#9AE6C8;
+}
 
 .results {
     width: 700px;
