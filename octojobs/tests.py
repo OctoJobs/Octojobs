@@ -1,7 +1,6 @@
 """The test module for the Octojobs project."""
 
 import faker
-from octojobs.models import mymodel
 from octojobs.models import Job
 from octojobs.models import get_tm_session
 from octojobs.models.meta import Base
@@ -21,6 +20,16 @@ DUMMY_JOBS = [Job(
     company=fake.company(),
     url=fake.url()
 ) for i in range(10)]
+
+KNOWN_JOB = Job(
+    title="Python Developer",
+    city="Seattle",
+    description="3+ years of experience testing and writing test automation for desktop and web applications. Skilled with testing on multiple platforms. Knowledgeable about designing and implementing infrastructure and APIs for automated test systems. Strong familiarity of database concepts is a plus.",
+    company="Python Coders",
+    url="http://www.python-coders.com",
+)
+
+DUMMY_JOBS.append(KNOWN_JOB)
 
 
 @pytest.fixture(scope="session")
@@ -84,6 +93,8 @@ def add_models(dummy_request):
 
     Every test that includes this fixture will add jobs.
     """
+    # dummy_request.dbsession.add_all(DUMMY_JOBS)
+
     dummy_request.dbsession.add_all(DUMMY_JOBS)
 
 
@@ -100,6 +111,12 @@ def test_get_home_view_is_empty_dict(dummy_request):
     """Assert empty dict is returned, from Get request."""
     from octojobs.views.default import home_view
     assert home_view(dummy_request) == {}
+
+
+def test_get_about_view_is_empty_dict(dummy_request):
+    """Assert empty dict is returned, from Get request."""
+    from octojobs.views.default import about_view
+    assert about_view(dummy_request) == {}
 
 
 def test_post_home_view_is_http_found(dummy_request):
@@ -215,6 +232,78 @@ def test_post_result_view_with_no_query(dummy_request):
     assert result_view(dummy_request) == {'no_query': 'no result'}
 
 
+def test_result_query_on_get_request_bad_location(dummy_request, db_session, add_models):
+    """Test bad get on location with no results returns failed."""
+    from octojobs.views.default import result_view
+
+    dummy_request.method = "GET"
+    dummy_request.GET = {'location': 'Sydney'}
+
+    results = result_view(dummy_request)
+
+    assert results == {'failed_search': 'No results'}
+
+
+def test_result_query_on_get_request_bad_search(dummy_request, db_session, add_models):
+    """Test bad get on search with no results returns failed."""
+    from octojobs.views.default import result_view
+
+    dummy_request.method = "GET"
+    dummy_request.GET = {'location': 'Seattle', 'search': 'Plsdkjg'}
+
+    results = result_view(dummy_request)
+
+    assert results == {'failed_search': 'No results'}
+
+
+def test_result_query_on_get_matched_location_search(dummy_request, db_session, add_models):
+    """Test get on location with results returned."""
+    from octojobs.views.default import result_view
+
+    dummy_request.method = "GET"
+    dummy_request.GET = {'location': 'Seattle'}
+
+    results = result_view(dummy_request)
+
+    assert results['results'].one().city == 'Seattle'
+
+
+def test_result_query_on_get_matched_search(dummy_request, db_session, add_models):
+    """Test get on keyword search with results returned."""
+    from octojobs.views.default import result_view
+
+    dummy_request.method = "GET"
+    dummy_request.GET = {'search': 'Python'}
+
+    results = result_view(dummy_request)
+
+    assert results['results'].one().title == 'Python Developer'
+
+
+def test_result_no_location_bad_search(dummy_request, db_session, add_models):
+    """Test get on bad keyword search with no location specified."""
+    from octojobs.views.default import result_view
+
+    dummy_request.method = "GET"
+    dummy_request.GET = {'search': 'kjhgs'}
+
+    results = result_view(dummy_request)
+
+    assert results == {'failed_search': 'No results'}
+
+
+def test_result_query_on_get_matched_search_and_location(dummy_request, db_session, add_models):
+    """Test get on keyword search with results returned."""
+    from octojobs.views.default import result_view
+
+    dummy_request.method = "GET"
+    dummy_request.GET = {'search': 'Python', 'location': 'Seattle'}
+
+    results = result_view(dummy_request)
+
+    assert results['results'].one().title == 'Python Developer'
+
+
 # ============= FUNTIONAL TESTS =====================
 
 
@@ -315,7 +404,9 @@ def test_create_OctopusItem_instance_empty_values(testapp,
                                                   empty_test_dict,
                                                   none_test_dict):
     """Input a dict with missing values.
-    Test that you still create an OctopusItem."""
+    Test that you still create an OctopusItem.
+
+    """
     items = {}
     key = None
     assert spider.build_items(items, empty_test_dict, key) == none_test_dict
@@ -336,12 +427,12 @@ def test_create_full_dict(testapp, spider, empty_test_dict):
     city = "Seattle, WA"
     description = "This is a job."
     new_dict = spider.create_dict(
-                empty_test_dict,
-                url=url,
-                title=title,
-                company=company,
-                city=city,
-                description=description)
+        empty_test_dict,
+        url=url,
+        title=title,
+        company=company,
+        city=city,
+        description=description)
     assert new_dict[url]["title"] == "Job"
 
 
