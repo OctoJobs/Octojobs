@@ -36,8 +36,8 @@ footer, header, hgroup, menu, nav, section {
 header {
     position: relative;
     width: 940px;
-    margin-left: 30%;
-    margin-right: 0;
+    margin: 5% 30% 0 30%;
+    background-color: rgba(41, 100, 131, 0.3);
 }
 
 
@@ -71,6 +71,7 @@ html {
 
 .header-container {
     background-image: url("../images/logo.png");
+    background-color: rgba(35, 72, 99, 0.01);
     background-size: 100px 100px;
     height: 100px;
     width: 100px;
@@ -85,9 +86,14 @@ html {
 h1 {
     margin-top: 30px;
     text-align: center;
-    font-size: 40px;
+    font-size: 60px;
     font-family: "Futura", sans-serif;
+    letter-spacing: 4px;
 
+}
+
+.octojobs {
+    background-color: rgba(35, 72, 99, 0.01);
 }
 
 h2 {
@@ -115,6 +121,7 @@ p {
     font-size: 22px;
     font-family: "Futura", sans-serif;
     text-align: center;
+    background-color: rgba(41, 100, 131, 0.3);
 }
 
 main {
@@ -143,7 +150,7 @@ button {
 }
 
 .btn:hover {
-    background-color:#9AE6C8;
+    background-color: #bdd0d9;
 }
 
 .results {
