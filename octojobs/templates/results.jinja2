@@ -16,16 +16,16 @@
             </div>
         </section>
     </section>
-        <section id="results" class="col-lg-6 col-lg-offset-3">
+        <section id="results">
             {% if no_query == 'no result' %}
-                <h1>You need to enter something.</h1>
-                <img id="mad_octo" src="{{request.static_url('octojobs:static/mad_octo.jpg')}}"/>
+                <h2>You need to enter something.</h2>
+                <img id="mad_octo" class="resultsimg" src="{{request.static_url('octojobs:static/mad_octo.jpg')}}"/>
             {% elif failed_search == "No results" %}
-                <h1>We found nothing. Search again, please.</h1>
-                <img id="sad_octo" src="{{request.static_url('octojobs:static/sad_octo.jpg')}}"/>
+                <h2>We found nothing. Search again, please.</h2>
+                <img id="sad_octo" class="resultsimg" src="{{request.static_url('octojobs:static/sad_octo.jpg')}}"/>
             {% endif %}
             {% for result in results %}
-                <h1>{{ result.title }}</h1>
+                <h3><a href="{{result.url}}">{{ result.title }}</a></h3>
                 <p>{{ result.city }}</p>
                 <p>{{ result.description }}</p>
             {% endfor %}

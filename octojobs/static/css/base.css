@@ -1,7 +1,175 @@
-#ul_nav {
+/* CSS to remove default browser styling */
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+}
+
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+    display: block;
+}
+
+* {
+    background-color: white;
+    color: #234863;
+}
+
+
+header {
+    position: relative;
+    margin: 5% 30% 0 30%;
+    background-color: rgba(41, 100, 131, 0.3);
+}
+
+
+ol, ul {
     list-style: none;
 }
 
-nav {
-    /*display: inline;*/
+a {
+    color: #234863;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #6F8FAC;
+    text-decoration: none;
+}
+
+html {
+    margin:0 auto 0 auto;
+    border:15px solid #325877;
+    background:#ffffff; 
+    height: 250%;
+    width: 100%;
+}
+
+.jumbotron {
+    background-color: white;
+    text-align: center;
+    margin: 0 auto;
+    padding-top: 0;
+}
+
+.header-container {
+    background-image: url("../images/logo.png");
+    background-color: rgba(35, 72, 99, 0.01);
+    background-size: 100px 100px;
+    height: 100px;
+    width: 100px;
+    background-repeat: no-repeat;
+    margin: 3%;
+    left: 43%;
+    position: absolute;
+
+}
+
+
+h1 {
+    margin-top: 30px;
+    text-align: center;
+    font-size: 60px;
+    font-family: "Futura", sans-serif;
+    letter-spacing: 4px;
+
+}
+
+.octojobs {
+    background-color: rgba(35, 72, 99, 0.01);
+}
+
+h2 {
+    text-align: center;
+    font-size: 30px;
+    font-family: "Futura", sans-serif;
+
+}
+
+h3 {
+    text-align: left;
+    font-size: 25px;
+    font-family: "Futura", sans-serif;
+
+}
+
+p {
+    text-align: left;
+    font-size: 16px;
+    font-family: "Futura", sans-serif;
+}
+
+#about {
+    margin: 150px 0 50px 0;
+    font-size: 22px;
+    font-family: "Futura", sans-serif;
+    text-align: center;
+    background-color: rgba(41, 100, 131, 0.3);
+}
+
+main {
+    border-top: 5%;
+    position: relative;
+    width: 700px;
+    height: 100%;
+    margin: 30px auto;
+}
+
+.input-group {
+    text-align: center;
+    margin: 10px auto;
+    padding: 5%;
+    font-family: "Futura", sans-serif;
+    font-size: 18px;
+}
+
+#keyword {
+    margin-bottom: 20px;
+}
+
+button {
+    margin: 20px;
+    width: 60px;
+}
+
+.btn:hover {
+    background-color: #bdd0d9;
+}
+
+.results {
+    width: 700px;
+
+}
+
+#sad_octo {
+    position: absolute;
+    left: 15%;
+    margin-top: 30px;
+}
+
+#mad_octo {
+    position: absolute;
+    left: 9%;
+    margin: 30px 0;
+}
+
+#intro p{
+    text-align: justify;
 }
