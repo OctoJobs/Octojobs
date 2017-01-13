@@ -6,15 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="pyramid web application">
     <meta name="author" content="Pylons Project">
-    <link rel="shortcut icon" href="{{request.static_url('octojobs:static/pyramid-16x16.png')}}">
+    <link rel="shortcut icon" href="{{request.static_url('octojobs:static/images/logo.png')}}">
 
     <title>Octojobs</title>
     <!-- Custom styles for this scaffold -->
-    <link href="{{request.static_url('octojobs:static/css/base.css')}}" rel="stylesheet">
 
     <!-- Bootstrap core CSS -->
     <link href="//oss.maxcdn.com/libs/twitter-bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
 
+    <link href="{{request.static_url('octojobs:static/css/base.css')}}" rel="stylesheet">
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -23,27 +23,36 @@
     <![endif]-->
   </head>
 
-    <body class="container">
-      <header class="row">
-          <img id="logo" class="col-lg-1 col-lg-offset-2" src="{{request.static_url('octojobs:static/images/logo.png')}}"/>
-          <nav>
-            <ul id="ul_nav">
-                <li><h1 class="col-lg-6 col-lg-offset-4"><a href={{ request.route_url('home') }}>OctoJobs</a></h1></li>
-                <li class="col-lg-1 col-lg-offset-3" id="about"><a href={{ request.route_url('about') }}>About</a></li>
-            </ul>
-          </nav>
-      </header>
-      {% block body %}
-      {% endblock %}
-      <footer class="row">
-          <p class="footer col-sm-3">&#169 2016 OctoJobs</p>
-      </footer>
-      {% block javascript %}
-      {% endblock %}
+  <body class="container">
+
+    <div class="outer-color">
+
+      <section class="inner-white">
+
+          <header class="row">
+              <h1 class="octojobs"><a href={{ request.route_url('home') }}>OctoJobs</a></h1>
+              <section class="header-container">
+              </section>
+              <nav>
+                <ul id="ul_nav">
+                    <h3 id="about"><a href={{ request.route_url('about') }}>About</a></h3>
+              </nav>
+          </header>
+
+          <main>
+            {% block body %}
+            {% endblock %}
+          </main>
+
+      </section>
+        
+    </div>
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
+    {% block javascript %}
+    {% endblock %}
     <script src="//oss.maxcdn.com/libs/jquery/1.10.2/jquery.min.js"></script>
     <script src="//oss.maxcdn.com/libs/twitter-bootstrap/3.0.3/js/bootstrap.min.js"></script>
   </body>
