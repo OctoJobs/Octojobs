@@ -1,8 +1,12 @@
-#OCTOJOBS#
-Octojobs is a Github-based, open source, webscraper and job opportunity aggregator. It scrapes a jobboard website, such as LinkedIn or Monster.com, and returns a query of jobs based on user-provided keywords.
+![OctoJobs](octojobs/static/images/logo.png) #OCTOJOBS#
+## Deployed at: octojobs-cf.herokuapp.com
+
+Octojobs is an open source webscraper and job opportunity aggregator. It scrapes a jobboard website, such as Indeed or Dice.com, and returns a query of jobs based on user-provided keywords and locations.
+
+Our scraper stores the results of a scrape in a postgreSQL database. The results are then loaded into the views, so that users can see job titles with live links to their original postings, the employer name, the location, and a brief description of the opportunity.
 
 ##Mission Statement
-Get more reach for your job search
+Get more reach for your job search.
 
 ## User Stories
 ###User
@@ -24,11 +28,18 @@ As a developer, we want to gather data on what jobs and skills are in the highes
 As a developer, we want to learn webscraping and data cleaning techniques.
 
 
+## About the Hackers
+
+[Claire Gatenby](https://github.com/clair3st)
+[Colin Lamont](https://github.com/chamberi)
+[Marc Kessler-Wenicker](https://github.com/wenima)
+[Rachael Wisecarver](https://github.com/rwisecar)
+
 
 ## Development Environment
 The development environment will include:
-1. Testing packages such as pytest, pytest-cov, and Tox to aid in test driven development.
-2. Scrapy, or a similar package for web scraping.
+1. Testing packages, including pytest, pytest-cov, Tox, and webtest to aid in test driven development.
+2. Scrapy
 3. The Python Requests library.
 4. Lots and lots of coffee.
 
