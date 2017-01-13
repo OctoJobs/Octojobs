@@ -240,6 +240,7 @@ def test_post_result_view_with_no_query(dummy_request):
     dummy_request.method = "POST"
     dummy_request.POST["location"] = ""
     dummy_request.POST["searchbar"] = ""
+    import pdb; pdb.set_trace()
 
     assert result_view(dummy_request) == {'no_query': 'no result'}
 
@@ -419,21 +420,20 @@ def test_create_empty_dict(testapp, spider, empty_test_dict, none_test_dict):
     assert spider.create_dict(empty_test_dict) == none_test_dict
 
 
-def test_create_OctopusItem_instance_empty_values(testapp,
+def test_create_octopusitem_instance_empty_values(testapp,
                                                   spider,
                                                   empty_test_dict,
                                                   none_test_dict):
     """Input a dict with missing values.
 
     Test that you still create an OctopusItem.
-
     """
     items = {}
     key = None
     assert spider.build_items(items, empty_test_dict, key) == none_test_dict
 
 
-def test_create_OctopusItem_instance(testapp, spider, full_test_dict):
+def test_create_octopusitem_instance(testapp, spider, full_test_dict):
     """Test that when you input a dict, it returns an OctopusItem."""
     items = {}
     spider.build_items(items, full_test_dict, "http:://www.example.com")
@@ -454,4 +454,3 @@ def test_create_full_dict(testapp, spider, empty_test_dict):
         company=company,
         city=city,
         description=description)
-    assert new_dict[url]["title"] == "Job"
