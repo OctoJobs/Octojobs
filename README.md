@@ -8,6 +8,8 @@ Our scraper stores the results of a scrape in a postgreSQL database. The results
 ##Mission Statement
 Get more reach for your job search.
 
+Our goal was to build a scraper that would target multiple sites and aggregate their data in one location that would be easy for a user to query.
+
 ## User Stories
 ###User
 As a user, we want an easy, one stop shop for our job search to find a job. 
@@ -29,6 +31,8 @@ As a developer, we want to learn webscraping and data cleaning techniques.
 
 
 ## About the Hackers
+
+This app was created in 4 days by the lovely and talented:
 
 [Claire Gatenby](https://github.com/clair3st)
 [Colin Lamont](https://github.com/chamberi)
@@ -54,3 +58,16 @@ or
 ```
 pip install -e .[testing]
 ```
+
+## Third Party Resources
+We would like to thank the following libraries, frameworks, packages, resources, and people.
+1. [Scrapy](https://doc.scrapy.org/en/latest/)
+2. Pyramid
+3. postgreSQL
+4. Heroku
+5. Waffle
+6. Bootstrap
+7. [Github user econchick and her NewCoder Blog](http://newcoder.io/scrape/)
+8. [Stack Overflow](http://stackoverflow.com/questions/6456304/scrapy-unit-testing/12751649)
+9. fake_Useragent
+10. [Scrapehero.com](https://www.scrapehero.com/how-to-prevent-getting-blacklisted-while-scraping/)
