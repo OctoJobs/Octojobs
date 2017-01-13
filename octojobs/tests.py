@@ -301,21 +301,21 @@ def test_result_query_on_get_matched_search(dummy_request,
     assert results['results'][0].title == 'Python Developer'
 
 
-# def test_result_no_location_bad_search(dummy_request,
-#                                        db_session,
-#                                        add_models):
-#     """Test GET on bad keyword search with no location specified.
+def test_result_no_location_bad_search(dummy_request,
+                                       db_session,
+                                       add_models):
+    """Test GET on bad keyword search with no location specified.
 
-#     Expect the return the failed search dictionary.
-#     """
-#     from octojobs.views.default import result_view
+    Expect the return the failed search dictionary.
+    """
+    from octojobs.views.default import result_view
 
-#     dummy_request.method = "GET"
-#     dummy_request.GET = {'search': 'kjhgs'}
+    dummy_request.method = "GET"
+    dummy_request.GET = {'search': 'kjhgs'}
 
-#     results = result_view(dummy_request)
+    results = result_view(dummy_request)
 
-#     assert results == {'failed_search': 'No results'}
+    assert results == {'failed_search': 'No results'}
 
 
 def test_result_query_on_get_matched_search_and_location(dummy_request,
@@ -328,6 +328,8 @@ def test_result_query_on_get_matched_search_and_location(dummy_request,
     dummy_request.GET = {'search': 'Python', 'location': 'Seattle'}
 
     results = result_view(dummy_request)
+
+    # import pdb; pdb.set_trace()
 
     assert results['results'][0].title == 'Python Developer'
 
@@ -383,19 +385,11 @@ def test_the_home_page_has_a_form(testapp):
     assert html.find_all("form")
 
 
-<<<<<<< HEAD
-# def test_the_results_page_has_a_form(testapp):
-#     """The results page has 2 input boxes."""
-#     response = testapp.get('/results?search=Python', status=302)
-#     html = response.html
-#     assert html.find_all("form")
-=======
 def test_the_results_page_has_a_form(testapp):
     """The results page has 2 input boxes."""
     response = testapp.get('/results?search=Python', status=200)
     html = response.html
     assert html.find_all("form")
->>>>>>> 82f5e9f74b15266278bb509df85b1356e618a02f
 
 
 def test_the_home_page_has_two_input_boxes(testapp):
@@ -416,11 +410,11 @@ def test_the_results_page_has_two_input_boxes(testapp):
     assert searchbar and location
 
 
-# def test_results_page_has_no_title_id_in_results_section(testapp):
-#     """The results page has no title, if no query submitted."""
-#     response = testapp.get('/results?search=Python', status=200)
-#     html = response.html
-#     assert len(html.find_all("item")) == 0
+def test_results_page_has_no_title_id_in_results_section(testapp):
+    """The results page has no title, if no query submitted."""
+    response = testapp.get('/results?search=Python', status=200)
+    html = response.html
+    assert len(html.find_all("item")) == 0
 
 
 def test_results_page_has_python_in_results_when_searched_on(testapp, fill_the_db):
@@ -542,26 +536,26 @@ def test_home_page_has_python_in_results_when_only_argument(testapp, fill_the_db
     assert full_response.html.get_text("Python").count("Python") > 0
 
 
-# def test_results_page_has_sad_octo_when_nothing_found(testapp, fill_the_db):
-#     """The results page has sad octo, when nothing found on query."""
-#     response = testapp.post("/results", params={
-#         "searchbar": "Fortran",
-#         "location": "Chicago"
-#     }, status=302)
-#     full_response = response.follow()
-#     sad_octo = full_response.html.find(id="sad_octo")
-#     assert sad_octo
+def test_results_page_has_sad_octo_when_nothing_found(testapp, fill_the_db):
+    """The results page has sad octo, when nothing found on query."""
+    response = testapp.post("/results", params={
+        "searchbar": "Fortran",
+        "location": "Chicago"
+    }, status=302)
+    full_response = response.follow()
+    sad_octo = full_response.html.find(id="sad_octo")
+    assert sad_octo
 
 
-# def test_home_page_has_sad_octo_when_nothing_found(testapp, fill_the_db):
-#     """The home page has sad octo, when nothing found on query."""
-#     response = testapp.post("/", params={
-#         "searchbar": "Fortran",
-#         "location": "Chicago"
-#     }, status=302)
-#     full_response = response.follow()
-#     sad_octo = full_response.html.find(id="sad_octo")
-#     assert sad_octo
+def test_home_page_has_sad_octo_when_nothing_found(testapp, fill_the_db):
+    """The home page has sad octo, when nothing found on query."""
+    response = testapp.post("/", params={
+        "searchbar": "Fortran",
+        "location": "Chicago"
+    }, status=302)
+    full_response = response.follow()
+    sad_octo = full_response.html.find(id="sad_octo")
+    assert sad_octo
 
 
 def test_results_page_has_mad_octo_when_nothing_entered_on_search(testapp, fill_the_db):
