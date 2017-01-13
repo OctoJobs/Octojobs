@@ -37,6 +37,9 @@ header {
     position: relative;
     margin: 5% 30% 0 30%;
     background-color: rgba(41, 100, 131, 0.3);
+    background-image: url("../images/background.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 
@@ -121,7 +124,6 @@ p {
     font-size: 22px;
     font-family: "Futura", sans-serif;
     text-align: center;
-    background-color: rgba(41, 100, 131, 0.3);
 }
 
 main {
