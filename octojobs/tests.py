@@ -8,8 +8,7 @@ from pyramid import testing
 from pyramid.httpexceptions import HTTPFound
 import pytest
 import transaction
-# import unittest.mock
-# import requests
+
 
 fake = faker.Faker()
 
@@ -20,6 +19,27 @@ DUMMY_JOBS = [Job(
     company=fake.company(),
     url=fake.url()
 ) for i in range(10)]
+
+KNOWN_JOB = Job(
+    title="Python Developer",
+    city="Seattle",
+    description="3+ years of experience testing and writing test automation for desktop and web applications. Skilled with testing on multiple platforms. Knowledgeable about designing and implementing infrastructure and APIs for automated test systems. Strong familiarity of database concepts is a plus.",
+    company="Python Coders",
+    url="http://www.python-coders.com",
+)
+
+DUMMY_JOBS.append(KNOWN_JOB)
+
+
+KNOWN_JOB = Job(
+    title="Python Developer",
+    city="Seattle",
+    description="3+ years of experience testing and writing test automation for desktop and web applications. Skilled with testing on multiple platforms. Knowledgeable about designing and implementing infrastructure and APIs for automated test systems. Strong familiarity of database concepts is a plus.",
+    company="Python Coders",
+    url="http://www.python-coders.com",
+    )
+
+DUMMY_JOBS.append(KNOWN_JOB)
 
 
 @pytest.fixture(scope="session")
@@ -83,6 +103,8 @@ def add_models(dummy_request):
 
     Every test that includes this fixture will add jobs.
     """
+    # dummy_request.dbsession.add_all(DUMMY_JOBS)
+
     dummy_request.dbsession.add_all(DUMMY_JOBS)
 
 
@@ -108,7 +130,7 @@ def test_get_about_view_is_empty_dict(dummy_request):
 
 
 def test_post_home_view_is_http_found(dummy_request):
-    """Assert is instance of HTTP found, from POST request."""
+    """Assert is instance of HTTP found, from POST request on home."""
     from octojobs.views.default import home_view
 
     dummy_request.method = "POST"
@@ -120,8 +142,21 @@ def test_post_home_view_is_http_found(dummy_request):
     assert isinstance(result, HTTPFound)
 
 
-def test_post_home_view_reroutes_with_query(dummy_request):
-    """Assert search terms are passed on url."""
+def test_post_result_view_is_http_found(dummy_request):
+    """Assert is instance of HTTP found, from POST request on resultview."""
+    from octojobs.views.default import result_view
+
+    dummy_request.method = "POST"
+    dummy_request.POST["searchbar"] = "test"
+    dummy_request.POST["location"] = "seattle"
+
+    result = result_view(dummy_request)
+
+    assert isinstance(result, HTTPFound)
+
+
+def test_post_home_view_reroutes_with_url_query(dummy_request):
+    """Assert search terms are passed on url when a post request."""
     from octojobs.views.default import home_view
 
     dummy_request.method = "POST"
@@ -134,7 +169,7 @@ def test_post_home_view_reroutes_with_query(dummy_request):
 
 
 def test_post_home_view_with_only_location_query(dummy_request):
-    """Test only one query with only location filled."""
+    """Test only one query with only location filled on url."""
     from octojobs.views.default import home_view
 
     dummy_request.method = "POST"
@@ -147,7 +182,7 @@ def test_post_home_view_with_only_location_query(dummy_request):
 
 
 def test_post_home_view_with_only_searchterm_query(dummy_request):
-    """Test only one query with only searchterm filled."""
+    """Test only one query with only search filled on url."""
     from octojobs.views.default import home_view
 
     dummy_request.method = "POST"
@@ -160,7 +195,7 @@ def test_post_home_view_with_only_searchterm_query(dummy_request):
 
 
 def test_post_home_view_with_no_query(dummy_request):
-    """Test only no queries on the home form are passed on url."""
+    """Test no query dictionary is returned on the home when left empty."""
     from octojobs.views.default import home_view
 
     dummy_request.method = "POST"
@@ -171,7 +206,7 @@ def test_post_home_view_with_no_query(dummy_request):
 
 
 def test_post_result_view_reroutes_with_new_query(dummy_request):
-    """Assert search terms are passed on url on result view."""
+    """Assert search terms passed on url on result view with both fields."""
     from octojobs.views.default import result_view
 
     dummy_request.method = "POST"
@@ -184,7 +219,7 @@ def test_post_result_view_reroutes_with_new_query(dummy_request):
 
 
 def test_post_results_view_with_location_query(dummy_request):
-    """Test only one query with only location filled."""
+    """Test only 1 query with only location filled on url for results form."""
     from octojobs.views.default import result_view
 
     dummy_request.method = "POST"
@@ -197,7 +232,7 @@ def test_post_results_view_with_location_query(dummy_request):
 
 
 def test_post_result_view_with_search_query_only(dummy_request):
-    """Test only one query with only search filled."""
+    """Test only one query with only search filled on url for results form."""
     from octojobs.views.default import result_view
 
     dummy_request.method = "POST"
@@ -210,31 +245,101 @@ def test_post_result_view_with_search_query_only(dummy_request):
 
 
 def test_post_result_view_with_no_query(dummy_request):
-    """Test only no queries on the home form are passed on url."""
+    """Test no query dictionary is returned on the results when left empty."""
     from octojobs.views.default import result_view
 
     dummy_request.method = "POST"
     dummy_request.POST["location"] = ""
     dummy_request.POST["searchbar"] = ""
-    import pdb; pdb.set_trace()
 
     assert result_view(dummy_request) == {'no_query': 'no result'}
 
 
-def test_get_result_view_with_no_query(dummy_request):
-    """Test get request on result view."""
+def test_result_query_on_get_request_bad_location(dummy_request,
+                                                  db_session,
+                                                  add_models):
+    """Test bad get on location with no results returns failed."""
     from octojobs.views.default import result_view
 
-    dummy_request.method = "POST"
-    dummy_request.POST["searchbar"] = "test"
-    dummy_request.POST["location"] = "seattle"
+    dummy_request.method = "GET"
+    dummy_request.GET = {'location': 'Sydney'}
 
-    get_info = dummy_request.GET.get('location')
+    results = result_view(dummy_request)
 
-    result_view(dummy_request)
+    assert results == {'failed_search': 'No results'}
 
-    assert dummy_request.GET["location"] == "seattle"
-    assert get_info == ""
+
+def test_result_query_on_get_request_bad_search(dummy_request,
+                                                db_session,
+                                                add_models):
+    """Test GET on search with bad results returns failed search dict."""
+    from octojobs.views.default import result_view
+
+    dummy_request.method = "GET"
+    dummy_request.GET = {'location': 'Seattle', 'search': 'Plsdkjg'}
+
+    results = result_view(dummy_request)
+
+    assert results == {'failed_search': 'No results'}
+
+
+def test_result_query_on_get_matched_location_search(dummy_request,
+                                                     db_session,
+                                                     add_models):
+    """Test GET on location with results returned."""
+    from octojobs.views.default import result_view
+
+    dummy_request.method = "GET"
+    dummy_request.GET = {'location': 'Seattle'}
+
+    results = result_view(dummy_request)
+
+    assert results['results'][0].city == 'Seattle'
+
+
+def test_result_query_on_get_matched_search(dummy_request,
+                                            db_session,
+                                            add_models):
+    """Test GET on keyword search with results returned."""
+    from octojobs.views.default import result_view
+
+    dummy_request.method = "GET"
+    dummy_request.GET = {'search': 'Python'}
+
+    results = result_view(dummy_request)
+
+    assert results['results'][0].title == 'Python Developer'
+
+
+def test_result_no_location_bad_search(dummy_request,
+                                       db_session,
+                                       add_models):
+    """Test GET on bad keyword search with no location specified.
+
+    Expect the return the failed search dictionary.
+    """
+    from octojobs.views.default import result_view
+
+    dummy_request.method = "GET"
+    dummy_request.GET = {'search': 'kjhgs'}
+
+    results = result_view(dummy_request)
+
+    assert results == {'failed_search': 'No results'}
+
+
+def test_result_query_on_get_matched_search_and_location(dummy_request,
+                                                         db_session,
+                                                         add_models):
+    """Test GET on keyword search with results returned."""
+    from octojobs.views.default import result_view
+
+    dummy_request.method = "GET"
+    dummy_request.GET = {'search': 'Python', 'location': 'Seattle'}
+
+    results = result_view(dummy_request)
+
+    assert results['results'][0].title == 'Python Developer'
 
 
 # ============= FUNTIONAL TESTS =====================
@@ -281,11 +386,166 @@ def fill_the_db(testapp):
         dbsession.add_all(DUMMY_JOBS)
 
 
-# def test_search_returns_results(testapp, fill_the_db):
-#     """When there's data in the database, the home page has rows."""
-#     response = testapp.get('results', method="POST", location="Seattle")
-#     html = response.html
-#     assert html.find_all("Windows") is True
+def test_the_home_page_has_a_form(testapp):
+    """The home page has 2 input boxes."""
+    response = testapp.get('/', status=200)
+    html = response.html
+    assert html.find_all("form")
+
+
+def test_the_results_page_has_a_form(testapp):
+    """The results page has 2 input boxes."""
+    response = testapp.get('/results?search=Python', status=200)
+    html = response.html
+    assert html.find_all("form")
+
+
+def test_the_home_page_has_two_input_boxes(testapp):
+    """The home page has 2 input boxes."""
+    response = testapp.get('/', status=200)
+    html = response.html
+    searchbar = html.find("input", {"name": "searchbar"})
+    location = html.find("input", {"name": "location"})
+    assert searchbar and location
+
+
+def test_the_results_page_has_two_input_boxes(testapp):
+    """The results page has 2 input boxes."""
+    response = testapp.get('/results?location=new+york', status=200)
+    html = response.html
+    searchbar = html.find("input", {"name": "searchbar"})
+    location = html.find("input", {"name": "location"})
+    assert searchbar and location
+
+
+def test_results_page_has_no_title_id_in_results_section(testapp):
+    """The results page has no title, if no query submitted."""
+    response = testapp.get('/results?search=Python', status=200)
+    html = response.html
+    assert len(html.find_all("item")) == 0
+
+
+def test_results_page_has_python_in_results_when_searched_on(testapp, fill_the_db):
+    """The results page query with python in it renders python results page."""
+    response = testapp.post("/results", params={
+        "searchbar": "Python",
+        "location": "Seattle"
+    }, status=302)
+    full_response = response.follow()
+    assert full_response.html.get_text("Python").count("Python") > 0
+
+
+def test_home_page_has_python_in_results_when_searched_on(testapp, fill_the_db):
+    """The home page query with python in it renders python results page."""
+    response = testapp.post("/", params={
+        "searchbar": "Python",
+        "location": "Seattle"
+    }, status=302)
+    full_response = response.follow()
+    assert full_response.html.get_text("Python").count("Python") > 0
+
+
+def test_results_page_has_seattle_in_results_when_searched_on(testapp, fill_the_db):
+    """The results page query with seattle in it renders seattle results page."""
+    response = testapp.post("/results", params={
+        "searchbar": "Python",
+        "location": "Seattle"
+    }, status=302)
+    full_response = response.follow()
+    assert full_response.html.get_text("Seattle").count("Seattle") > 0
+
+
+def test_home_page_has_seattle_in_results_when_searched_on(testapp, fill_the_db):
+    """The home page query with seattle in it renders seattle results page."""
+    response = testapp.post("/", params={
+        "searchbar": "Python",
+        "location": "Seattle"
+    }, status=302)
+    full_response = response.follow()
+    assert full_response.html.get_text("Seattle").count("Seattle") > 0
+
+
+def test_results_page_has_seattle_in_results_when_only_argument(testapp, fill_the_db):
+    """The results page search on seattle only gives a seattle results page."""
+    response = testapp.post("/results", params={
+        "searchbar": "",
+        "location": "Seattle"
+    }, status=302)
+    full_response = response.follow()
+    assert full_response.html.get_text("Seattle").count("Seattle") > 0
+
+
+def test_home_page_has_seattle_in_results_when_only_argument(testapp, fill_the_db):
+    """The home page search on seattle only gives a seattle results page."""
+    response = testapp.post("/", params={
+        "searchbar": "",
+        "location": "Seattle"
+    }, status=302)
+    full_response = response.follow()
+    assert full_response.html.get_text("Seattle").count("Seattle") > 0
+
+
+def test_results_page_has_python_in_results_when_only_argument(testapp, fill_the_db):
+    """The results page search with python only gives a python results page."""
+    response = testapp.post("/results", params={
+        "searchbar": "",
+        "location": "Seattle"
+    }, status=302)
+    full_response = response.follow()
+    assert full_response.html.get_text("Python").count("Python") > 0
+
+
+def test_home_page_has_python_in_results_when_only_argument(testapp, fill_the_db):
+    """The home page search with python only gives a python result page."""
+    response = testapp.post("/", params={
+        "searchbar": "",
+        "location": "Seattle"
+    }, status=302)
+    full_response = response.follow()
+    assert full_response.html.get_text("Python").count("Python") > 0
+
+
+def test_results_page_has_sad_octo_when_nothing_found(testapp, fill_the_db):
+    """The results page has sad octo, when nothing found on query."""
+    response = testapp.post("/results", params={
+        "searchbar": "Fortran",
+        "location": "Chicago"
+    }, status=302)
+    full_response = response.follow()
+    sad_octo = full_response.html.find(id="sad_octo")
+    assert sad_octo
+
+
+def test_home_page_has_sad_octo_when_nothing_found(testapp, fill_the_db):
+    """The home page has sad octo, when nothing found on query."""
+    response = testapp.post("/", params={
+        "searchbar": "Fortran",
+        "location": "Chicago"
+    }, status=302)
+    full_response = response.follow()
+    sad_octo = full_response.html.find(id="sad_octo")
+    assert sad_octo
+
+
+def test_results_page_has_mad_octo_when_nothing_entered_on_search(testapp, fill_the_db):
+    """The results page has mad octo, when nothing entered on query."""
+    response = testapp.post("/results", params={
+        "searchbar": "",
+        "location": ""
+    }, status=200)
+    mad_octo = response.html.find(id="mad_octo")
+    assert mad_octo
+
+
+def test_home_page_has_sad_octo_when_nothing_entered_on_search(testapp, fill_the_db):
+    """The home page has mad octo, when nothing entered on query."""
+    response = testapp.post("/", params={
+        "searchbar": "",
+        "location": ""
+    }, status=200)
+    html = response.html
+    mad_octo = html.find(id="mad_octo")
+    assert mad_octo
 
 
 # ============= SPIDER TESTS =====================
@@ -366,5 +626,4 @@ def test_create_full_dict(testapp, spider, empty_test_dict):
         company=company,
         city=city,
         description=description)
-
     assert new_dict[url]["title"] == "Job"
