@@ -425,6 +425,86 @@ def test_results_page_has_no_title_id_in_results_section(testapp):
     assert len(html.find_all("item")) == 0
 
 
+def test_results_page_has_python_in_results_when_searched_on(testapp, fill_the_db):
+    """The results page query with python in it renders python results page."""
+    response = testapp.post("/results", params={
+        "searchbar": "Python",
+        "location": "Seattle"
+    }, status=302)
+    full_response = response.follow()
+    assert full_response.html.get_text("Python").count("Python") > 0
+
+
+def test_home_page_has_python_in_results_when_searched_on(testapp, fill_the_db):
+    """The home page query with python in it renders python results page."""
+    response = testapp.post("/", params={
+        "searchbar": "Python",
+        "location": "Seattle"
+    }, status=302)
+    full_response = response.follow()
+    assert full_response.html.get_text("Python").count("Python") > 0
+
+
+def test_results_page_has_seattle_in_results_when_searched_on(testapp, fill_the_db):
+    """The results page query with seattle in it renders seattle results page."""
+    response = testapp.post("/results", params={
+        "searchbar": "Python",
+        "location": "Seattle"
+    }, status=302)
+    full_response = response.follow()
+    assert full_response.html.get_text("Seattle").count("Seattle") > 0
+
+
+def test_home_page_has_seattle_in_results_when_searched_on(testapp, fill_the_db):
+    """The home page query with seattle in it renders seattle results page."""
+    response = testapp.post("/", params={
+        "searchbar": "Python",
+        "location": "Seattle"
+    }, status=302)
+    full_response = response.follow()
+    assert full_response.html.get_text("Seattle").count("Seattle") > 0
+
+
+def test_results_page_has_seattle_in_results_when_only_argument(testapp, fill_the_db):
+    """The results page search on seattle only gives a seattle results page."""
+    response = testapp.post("/results", params={
+        "searchbar": "",
+        "location": "Seattle"
+    }, status=302)
+    full_response = response.follow()
+    assert full_response.html.get_text("Seattle").count("Seattle") > 0
+
+
+def test_home_page_has_seattle_in_results_when_only_argument(testapp, fill_the_db):
+    """The home page search on seattle only gives a seattle results page."""
+    response = testapp.post("/", params={
+        "searchbar": "",
+        "location": "Seattle"
+    }, status=302)
+    full_response = response.follow()
+    assert full_response.html.get_text("Seattle").count("Seattle") > 0
+
+
+def test_results_page_has_python_in_results_when_only_argument(testapp, fill_the_db):
+    """The results page search with python only gives a python results page."""
+    response = testapp.post("/results", params={
+        "searchbar": "",
+        "location": "Seattle"
+    }, status=302)
+    full_response = response.follow()
+    assert full_response.html.get_text("Python").count("Python") > 0
+
+
+def test_home_page_has_python_in_results_when_only_argument(testapp, fill_the_db):
+    """The home page search with python only gives a python result page."""
+    response = testapp.post("/", params={
+        "searchbar": "",
+        "location": "Seattle"
+    }, status=302)
+    full_response = response.follow()
+    assert full_response.html.get_text("Python").count("Python") > 0
+
+
 def test_results_page_has_sad_octo_when_nothing_found(testapp, fill_the_db):
     """The results page has sad octo, when nothing found on query."""
     response = testapp.post("/results", params={
