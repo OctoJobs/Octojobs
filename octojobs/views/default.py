@@ -55,7 +55,6 @@ def result_view(request):
         return post_request(request)
 
     try:
-        import pdb; pdb.set_trace()
         searchterm = '%' + request.GET.get('search') + '%'
     except TypeError:
         searchterm = None

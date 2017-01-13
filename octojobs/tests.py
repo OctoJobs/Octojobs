@@ -8,6 +8,8 @@ from pyramid import testing
 from pyramid.httpexceptions import HTTPFound
 import pytest
 import transaction
+# import unittest.mock
+# import requests
 
 fake = faker.Faker()
 
@@ -18,6 +20,17 @@ DUMMY_JOBS = [Job(
     company=fake.company(),
     url=fake.url()
 ) for i in range(10)]
+
+
+KNOWN_JOB = Job(
+    title="Python Developer",
+    city="Seattle",
+    description="3+ years of experience testing and writing test automation for desktop and web applications. Skilled with testing on multiple platforms. Knowledgeable about designing and implementing infrastructure and APIs for automated test systems. Strong familiarity of database concepts is a plus.",
+    company="Python Coders",
+    url="http://www.python-coders.com",
+    )
+
+DUMMY_JOBS.append(KNOWN_JOB)
 
 
 @pytest.fixture(scope="session")
@@ -217,11 +230,12 @@ def test_post_result_view_searchterm_is_confirmed(dummy_request):
 
     dummy_request.method = "POST"
     dummy_request.POST["searchbar"] = "joe"
-    dummy_request.POST["location"] = ""
+    dummy_request.POST["location"] = "new york"
 
-    assert dummy_request.GET.get('search') == "joe"
+    assert dummy_request.GET.get('searchbar') == "joe"
 
-def test_post_result_view_searchterm_is_confirmed(dummy_request):
+
+def test_post_result_view_location_is_confirmed(dummy_request):
     """Test posting from results that search term is confirmed."""
 
     dummy_request.method = "POST"
@@ -275,12 +289,86 @@ def fill_the_db(testapp):
         dbsession.add_all(DUMMY_JOBS)
 
 
-# def test_search_returns_results(testapp, fill_the_db):
-#     """When there's data in the database, the home page has rows."""
-#     response = testapp.get('results', method="POST", location="Seattle")
-#     html = response.html
-#     assert html.find_all("Windows") is True
+def test_the_home_page_has_a_form(testapp):
+    """The home page has 2 input boxes."""
+    response = testapp.get('/', status=200)
+    html = response.html
+    assert html.find_all("form")
 
+
+def test_the_results_page_has_a_form(testapp):
+    """The results page has 2 input boxes."""
+    response = testapp.get('/results?search=Python', status=200)
+    html = response.html
+    assert html.find_all("form")
+
+
+def test_the_home_page_has_two_input_boxes(testapp):
+    """The home page has 2 input boxes."""
+    response = testapp.get('/', status=200)
+    html = response.html
+    searchbar = html.find("input", {"name": "searchbar"})
+    location = html.find("input", {"name": "location"})
+    assert searchbar and location
+
+
+def test_the_results_page_has_two_input_boxes(testapp):
+    """The results page has 2 input boxes."""
+    response = testapp.get('/results?location=new+york', status=200)
+    html = response.html
+    searchbar = html.find("input", {"name": "searchbar"})
+    location = html.find("input", {"name": "location"})
+    assert searchbar and location
+
+
+def test_results_page_has_no_title_id_in_results_section(testapp):
+    """The results page has no title, if no query submitted."""
+    response = testapp.get('/results?search=Python', status=200)
+    html = response.html
+    assert len(html.find_all("item")) == 0
+
+
+def test_results_page_has_sad_octo_when_nothing_found(testapp, fill_the_db):
+    """The results page has sad octo, when nothing found on query."""
+    response = testapp.post("/results", params={
+        "searchbar": "Fortran",
+        "location": "Chicago"
+    }, status=302)
+    full_response = response.follow()
+    sad_octo = full_response.html.find(id="sad_octo")
+    assert sad_octo
+
+
+def test_home_page_has_sad_octo_when_nothing_found(testapp, fill_the_db):
+    """The home page has sad octo, when nothing found on query."""
+    response = testapp.post("/", params={
+        "searchbar": "Fortran",
+        "location": "Chicago"
+    }, status=302)
+    full_response = response.follow()
+    sad_octo = full_response.html.find(id="sad_octo")
+    assert sad_octo
+
+
+def test_results_page_has_mad_octo_when_nothing_entered_on_search(testapp, fill_the_db):
+    """The results page has mad octo, when nothing entered on query."""
+    response = testapp.post("/results", params={
+        "searchbar": "",
+        "location": ""
+    }, status=200)
+    mad_octo = response.html.find(id="mad_octo")
+    assert mad_octo
+
+
+def test_home_page_has_sad_octo_when_nothing_entered_on_search(testapp, fill_the_db):
+    """The home page has mad octo, when nothing entered on query."""
+    response = testapp.post("/", params={
+        "searchbar": "",
+        "location": ""
+    }, status=200)
+    html = response.html
+    mad_octo = html.find(id="mad_octo")
+    assert mad_octo
 
 # ============= SPIDER TESTS =====================
 
@@ -294,21 +382,68 @@ def spider():
 
 
 @pytest.fixture(scope="session")
-def test_dict():
-    """Create an empty dictionary."""
+def empty_test_dict():
+    """Create an empty dictionary for tests."""
     return {}
 
 
-def test_create_empty_dict(testapp, spider, test_dict):
+@pytest.fixture(scope="session")
+def full_test_dict():
+    """Create a full dictionary for tests."""
+    return {"http:://www.example.com": {
+            'city': "Seattle, WA",
+            'company': "Google",
+            'description': "This is a job.",
+            'title': "Job",
+            'url': "http:://www.example.com"}}
+
+
+@pytest.fixture(scope="session")
+def none_test_dict():
+    """Create a dictionary with none values for testing."""
+    return {None: {
+            'city': None,
+            'company': None,
+            'description': None,
+            'title': None,
+            'url': None}}
+
+
+def test_create_empty_dict(testapp, spider, empty_test_dict, none_test_dict):
     """Test that create dict method returns null values in dict when empty."""
-    assert spider.create_dict(test_dict) == {None: {'city': None, 'company': None, 'description': None, 'title': None, 'url': None}}
+    assert spider.create_dict(empty_test_dict) == none_test_dict
 
 
-def test_create_full_dict(testapp, spider, test_dict):
+def test_create_OctopusItem_instance_empty_values(testapp,
+                                                  spider,
+                                                  empty_test_dict,
+                                                  none_test_dict):
+    """Input a dict with missing values.
+    Test that you still create an OctopusItem."""
+    items = {}
+    key = None
+    assert spider.build_items(items, empty_test_dict, key) == none_test_dict
+
+
+def test_create_OctopusItem_instance(testapp, spider, full_test_dict):
+    """Test that when you input a dict, it returns an OctopusItem."""
+    items = {}
+    spider.build_items(items, full_test_dict, "http:://www.example.com")
+    assert items["http:://www.example.com"]['city'] == 'Seattle, WA'
+
+
+def test_create_full_dict(testapp, spider, empty_test_dict):
     """Test that create dict method returns expected values when dict full."""
     url = "http:://www.example.com"
-    assert spider.create_dict(test_dict, title="Job", url=url, company="Google", city="Seattle, WA", description="This is a job.") == {"http:://www.example.com": {'city': "Seattle, WA", 'company': "Google", 'description': "This is a job.", 'title': "Job", 'url': "http:://www.example.com"}}
-
-
-# def test_create_OctopusItem_instance(testapp, spider, test_dict):
-#     """Test that when you input a dict, it returns an OctopusItem."""
+    title = "Job"
+    company = "Google"
+    city = "Seattle, WA"
+    description = "This is a job."
+    new_dict = spider.create_dict(
+                empty_test_dict,
+                url=url,
+                title=title,
+                company=company,
+                city=city,
+                description=description)
+    assert new_dict[url]["title"] == "Job"
