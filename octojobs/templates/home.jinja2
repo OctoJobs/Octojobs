@@ -2,8 +2,11 @@
 
 {% block body %}
     <section class="jumbotron">
+        <section id="intro" class="row">
+            <p>Octojobs a web scraping app designed to help you find your next opportunity. Just enter a keyword, like "Python" or "Javascript", and a location, and we'll stretch out our tentacles and find the latest job postings from a variety of websites.</p>
+        </section>
         <section id="searchbar" class="row">
-            <div class="col-lg-6">
+            <div class="form">
                 <div class="input-group">
                     <form method="POST" size=300px>
                         <input type="text" id="keyword" name="searchbar" placeholder="Search for..."/>
@@ -14,6 +17,7 @@
                     </form>
                 </div>
             </div>
+            <hr>
         </section>
     </section>
     <section>
