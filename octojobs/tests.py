@@ -325,6 +325,7 @@ def test_result_query_on_get_matched_search_and_location(dummy_request,
     from octojobs.views.default import result_view
 
     dummy_request.method = "GET"
+
     dummy_request.GET = {'location': 'Seattle', 'search': 'Python'}
 
     results = result_view(dummy_request)

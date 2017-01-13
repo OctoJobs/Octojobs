@@ -65,6 +65,7 @@ def result_view(request):
         location = None
 
     field_category = [Job.description, Job.title, Job.company]
+
     db_query = request.dbsession.query(Job)
 
     if location and searchterm:
