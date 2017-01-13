@@ -3,8 +3,8 @@
 {% block body %}
     <section class="jumbotron">
         <section id="searchbar" class="row">
-            <div class="col-lg-6">
-                <div class="input-group">
+            <div class="form">
+                <div class="input-group" class="form-group row">
                     <form method="POST" size=300px>
                         <input type="text" id="keyword" name="searchbar" placeholder="Search for..."/>
                         <input type="text" id="location" name="location" placeholder="Location"/>
@@ -14,6 +14,7 @@
                     </form>
                 </div>
             </div>
+            <hr>
         </section>
     </section>
         <section id="results">
@@ -25,9 +26,11 @@
                 <img id="sad_octo" class="resultsimg" src="{{request.static_url('octojobs:static/sad_octo.jpg')}}"/>
             {% endif %}
             {% for result in results %}
-                <h3 id="title"><a href="{{result.url}}">{{ result.title }}</a></h3>
-                <p id="city">{{ result.city }}</p>
-                <p id="description">{{ result.description }}</p>
+                <section class="addspace">
+                    <h3 id="title"><a href="{{result.url}}">{{ result.title }}</a></h3>
+                    <p id="city">{{ result.city }}</p>
+                    <p id="description">{{ result.description }}</p>
+                </section>
             {% endfor %}
         </section>
 {% endblock %}
