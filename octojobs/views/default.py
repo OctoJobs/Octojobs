@@ -76,9 +76,9 @@ def result_view(request):
             ))
             if filter_query.count() > 0:
                 search_hit = filter_query
-        if search_hit == 0:
-            return {'failed_search': 'No results'}
 
+        if filter_query.count() == 0:
+            return {'failed_search': 'No results'}
 
     elif searchterm and location is None:
         field_category.append(Job.city)
@@ -88,7 +88,7 @@ def result_view(request):
             if filter_query.count() > 0:
                 search_hit = filter_query
                 break
-        if search_hit == 0:
+        if filter_query.count() == 0:
             return {'failed_search': 'No results'}
 
     elif location and searchterm is None:
