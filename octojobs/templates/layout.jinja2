@@ -30,19 +30,18 @@
       <section class="inner-white">
 
           <header class="row">
-              <img id="logo" class="col-lg-1 col-lg-offset-2" src="{{request.static_url('octojobs:static/images/logo.png')}}"/>
+              <h1><a href={{ request.route_url('home') }}>OctoJobs</a></h1>
+              <section class="header-container">
+              </section>
               <nav>
                 <ul id="ul_nav">
-                    <li><h1 class="col-lg-6 col-lg-offset-4"><a href={{ request.route_url('home') }}>OctoJobs</a></h1></li>
-                    <li class="col-lg-1 col-lg-offset-3" id="about"><a href={{ request.route_url('about') }}>About</a></li>
-                </ul>
+                    <h3 id="about"><a href={{ request.route_url('about') }}>About</a></h3>
               </nav>
           </header>
-          {% block body %}
-          {% endblock %}
-          <footer class="row">
-              <p class="footer col-sm-3">&#169 2016 OctoJobs</p>
-          </footer>
+          <main>
+            {% block body %}
+            {% endblock %}
+          </main>
 
       </section>
         

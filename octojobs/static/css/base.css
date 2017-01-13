@@ -1,15 +1,159 @@
-#ul_nav {
+/* CSS to remove default browser styling */
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+}
+
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+    display: block;
+}
+
+* {
+    background-color: white;
+    color: #2c2f33;
+}
+
+
+header {
+    position: relative;
+    width: 940px;
+    margin-left: 30%;
+    margin-right: 0;
+}
+
+
+ol, ul {
     list-style: none;
 }
 
-body {
-    background-color: #428bca;
+a {
+    color: #0E376F;
+    text-decoration: none;
 }
 
-.outer-color {
+a:hover {
+    color: #2B4F71;
+    text-decoration: none;
+}
+
+html {
+    margin:0 auto 0 auto;
+    border:5px solid #0E376F;
+    background:#ffffff; 
+    height: 200%;
+}
+
+.jumbotron {
     background-color: white;
+    text-align: center;
+    margin: 0 auto;
+    padding-top: 0;
 }
 
-.inner-color {
+.header-container {
+    background-image: url("../images/logo.png");
+    background-size: 100px 100px;
+    height: 100px;
+    width: 100px;
+    background-repeat: no-repeat;
+    margin: 30px;
+    left: 42%;
+    position: absolute;
+
+}
+
+
+h1 {
+    text-align: center;
+    font-size: 40px;
+    font-family: "Futura", sans-serif;
+
+}
+
+h2 {
+    text-align: center;
+    font-size: 30px;
+    font-family: "Futura", sans-serif;
+
+}
+
+h3 {
+    text-align: left;
+    font-size: 25px;
+    font-family: "Futura", sans-serif;
+
+}
+
+p {
+    text-align: left;
+    font-size: 16px;
+    font-family: "Futura", sans-serif;
+}
+
+#about {
+    margin: 150px 0 50px 0;
+    font-size: 22px;
+    font-family: "Futura", sans-serif;
+    text-align: center;
+}
+
+main {
+    border-top: 5%;
+    position: relative;
+    width: 700px;
+    height: 100%;
+    margin: 30px auto;
+}
+
+.input-group {
+    text-align: center;
+    margin: 10px auto;
     padding: 5%;
+    font-family: "Futura", sans-serif;
+    font-size: 18px;
+}
+
+#keyword {
+    margin-bottom: 20px;
+}
+button {
+    margin: 20px;
+    width: 60px;
+}
+
+
+.results {
+    width: 700px;
+
+}
+
+#sad_octo {
+    position: absolute;
+    left: 15%;
+    margin-top: 30px;
+}
+
+#mad_octo {
+    position: absolute;
+    left: 9%;
+    margin: 30px 0;
 }
