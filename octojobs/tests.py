@@ -8,8 +8,7 @@ from pyramid import testing
 from pyramid.httpexceptions import HTTPFound
 import pytest
 import transaction
-# import unittest.mock
-# import requests
+
 
 fake = faker.Faker()
 
@@ -120,7 +119,7 @@ def test_get_about_view_is_empty_dict(dummy_request):
 
 
 def test_post_home_view_is_http_found(dummy_request):
-    """Assert is instance of HTTP found, from POST request."""
+    """Assert is instance of HTTP found, from POST request on home."""
     from octojobs.views.default import home_view
 
     dummy_request.method = "POST"
@@ -132,8 +131,21 @@ def test_post_home_view_is_http_found(dummy_request):
     assert isinstance(result, HTTPFound)
 
 
-def test_post_home_view_reroutes_with_query(dummy_request):
-    """Assert search terms are passed on url."""
+def test_post_result_view_is_http_found(dummy_request):
+    """Assert is instance of HTTP found, from POST request on resultview."""
+    from octojobs.views.default import result_view
+
+    dummy_request.method = "POST"
+    dummy_request.POST["searchbar"] = "test"
+    dummy_request.POST["location"] = "seattle"
+
+    result = result_view(dummy_request)
+
+    assert isinstance(result, HTTPFound)
+
+
+def test_post_home_view_reroutes_with_url_query(dummy_request):
+    """Assert search terms are passed on url when a post request."""
     from octojobs.views.default import home_view
 
     dummy_request.method = "POST"
@@ -146,7 +158,7 @@ def test_post_home_view_reroutes_with_query(dummy_request):
 
 
 def test_post_home_view_with_only_location_query(dummy_request):
-    """Test only one query with only location filled."""
+    """Test only one query with only location filled on url."""
     from octojobs.views.default import home_view
 
     dummy_request.method = "POST"
@@ -159,7 +171,7 @@ def test_post_home_view_with_only_location_query(dummy_request):
 
 
 def test_post_home_view_with_only_searchterm_query(dummy_request):
-    """Test only one query with only searchterm filled."""
+    """Test only one query with only search filled on url."""
     from octojobs.views.default import home_view
 
     dummy_request.method = "POST"
@@ -172,7 +184,7 @@ def test_post_home_view_with_only_searchterm_query(dummy_request):
 
 
 def test_post_home_view_with_no_query(dummy_request):
-    """Test only no queries on the home form are passed on url."""
+    """Test no query dictionary is returned on the home when left empty."""
     from octojobs.views.default import home_view
 
     dummy_request.method = "POST"
@@ -183,7 +195,7 @@ def test_post_home_view_with_no_query(dummy_request):
 
 
 def test_post_result_view_reroutes_with_new_query(dummy_request):
-    """Assert search terms are passed on url on result view."""
+    """Assert search terms passed on url on result view with both fields."""
     from octojobs.views.default import result_view
 
     dummy_request.method = "POST"
@@ -196,7 +208,7 @@ def test_post_result_view_reroutes_with_new_query(dummy_request):
 
 
 def test_post_results_view_with_location_query(dummy_request):
-    """Test only one query with only location filled."""
+    """Test only 1 query with only location filled on url for results form."""
     from octojobs.views.default import result_view
 
     dummy_request.method = "POST"
@@ -209,7 +221,7 @@ def test_post_results_view_with_location_query(dummy_request):
 
 
 def test_post_result_view_with_search_query_only(dummy_request):
-    """Test only one query with only search filled."""
+    """Test only one query with only search filled on url for results form."""
     from octojobs.views.default import result_view
 
     dummy_request.method = "POST"
@@ -222,7 +234,7 @@ def test_post_result_view_with_search_query_only(dummy_request):
 
 
 def test_post_result_view_with_no_query(dummy_request):
-    """Test only no queries on the home form are passed on url."""
+    """Test no query dictionary is returned on the results when left empty."""
     from octojobs.views.default import result_view
 
     dummy_request.method = "POST"
@@ -232,7 +244,9 @@ def test_post_result_view_with_no_query(dummy_request):
     assert result_view(dummy_request) == {'no_query': 'no result'}
 
 
-def test_result_query_on_get_request_bad_location(dummy_request, db_session, add_models):
+def test_result_query_on_get_request_bad_location(dummy_request,
+                                                  db_session,
+                                                  add_models):
     """Test bad get on location with no results returns failed."""
     from octojobs.views.default import result_view
 
@@ -244,8 +258,10 @@ def test_result_query_on_get_request_bad_location(dummy_request, db_session, add
     assert results == {'failed_search': 'No results'}
 
 
-def test_result_query_on_get_request_bad_search(dummy_request, db_session, add_models):
-    """Test bad get on search with no results returns failed."""
+def test_result_query_on_get_request_bad_search(dummy_request,
+                                                db_session,
+                                                add_models):
+    """Test GET on search with bad results returns failed search dict."""
     from octojobs.views.default import result_view
 
     dummy_request.method = "GET"
@@ -256,8 +272,10 @@ def test_result_query_on_get_request_bad_search(dummy_request, db_session, add_m
     assert results == {'failed_search': 'No results'}
 
 
-def test_result_query_on_get_matched_location_search(dummy_request, db_session, add_models):
-    """Test get on location with results returned."""
+def test_result_query_on_get_matched_location_search(dummy_request,
+                                                     db_session,
+                                                     add_models):
+    """Test GET on location with results returned."""
     from octojobs.views.default import result_view
 
     dummy_request.method = "GET"
@@ -268,8 +286,10 @@ def test_result_query_on_get_matched_location_search(dummy_request, db_session, 
     assert results['results'].one().city == 'Seattle'
 
 
-def test_result_query_on_get_matched_search(dummy_request, db_session, add_models):
-    """Test get on keyword search with results returned."""
+def test_result_query_on_get_matched_search(dummy_request,
+                                            db_session,
+                                            add_models):
+    """Test GET on keyword search with results returned."""
     from octojobs.views.default import result_view
 
     dummy_request.method = "GET"
@@ -280,8 +300,13 @@ def test_result_query_on_get_matched_search(dummy_request, db_session, add_model
     assert results['results'].one().title == 'Python Developer'
 
 
-def test_result_no_location_bad_search(dummy_request, db_session, add_models):
-    """Test get on bad keyword search with no location specified."""
+def test_result_no_location_bad_search(dummy_request,
+                                       db_session,
+                                       add_models):
+    """Test GET on bad keyword search with no location specified.
+
+    Expect the return the failed search dictionary.
+    """
     from octojobs.views.default import result_view
 
     dummy_request.method = "GET"
@@ -292,8 +317,10 @@ def test_result_no_location_bad_search(dummy_request, db_session, add_models):
     assert results == {'failed_search': 'No results'}
 
 
-def test_result_query_on_get_matched_search_and_location(dummy_request, db_session, add_models):
-    """Test get on keyword search with results returned."""
+def test_result_query_on_get_matched_search_and_location(dummy_request,
+                                                         db_session,
+                                                         add_models):
+    """Test GET on keyword search with results returned."""
     from octojobs.views.default import result_view
 
     dummy_request.method = "GET"
@@ -348,13 +375,6 @@ def fill_the_db(testapp):
         dbsession.add_all(DUMMY_JOBS)
 
 
-# def test_search_returns_results(testapp, fill_the_db):
-#     """When there's data in the database, the home page has rows."""
-#     response = testapp.get('results', method="POST", location="Seattle")
-#     html = response.html
-#     assert html.find_all("Windows") is True
-
-
 # ============= SPIDER TESTS =====================
 
 
@@ -404,6 +424,7 @@ def test_create_OctopusItem_instance_empty_values(testapp,
                                                   empty_test_dict,
                                                   none_test_dict):
     """Input a dict with missing values.
+
     Test that you still create an OctopusItem.
 
     """
@@ -434,48 +455,3 @@ def test_create_full_dict(testapp, spider, empty_test_dict):
         city=city,
         description=description)
     assert new_dict[url]["title"] == "Job"
-
-
-# def fake_html_file(file_name):
-#     """Return a filepath to a dummy html file for the spider to parse."""
-#     import os
-
-#     if not file_name[0] == '/':
-#         responses_dir = os.path.dirname(os.path.realpath(__file__))
-#         file_path = os.path.join(responses_dir, file_name)
-#     else:
-#         file_path = file_name
-#     file_content = open(file_path, 'r').read()
-
-#     return file_content
-
-
-# def mocked_requests_get(*args, **kwargs):
-#     """Create a mock request object for the spider to parse."""
-#     from unittest import mock
-
-#     class MockResponse:
-#         def __init__(self, responsebody, status_code):
-#             self.responsebody = responsebody
-#             self.status_code = status_code
-
-#         def body(self):
-#             return self.responsebody
-
-#     return MockResponse(fake_html_file(
-#         'tests/dummy_html/dice_list.html'), 200)
-
-
-# class TestParseDiceView(unittest.TestCase):
-#     """Test that running spider over html returns expected response."""
-#     from unittest import mock
-
-#     @mock.patch('requests.get', new_callable=mocked_requests_get)
-#     def test_fetch(self, mock_get):
-#         """Test that spider goes to the mock url and returns response."""
-#         from octopus.spiders.spider import JobSpider
-#         spider = JobSpider()
-
-#         self.assertEqual(spider.parse(
-#             mocked_requests_get), fake_html_file(
-#             'tests/dummy_html/dice_list.html'))
