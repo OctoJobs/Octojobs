@@ -31,6 +31,17 @@ KNOWN_JOB = Job(
 DUMMY_JOBS.append(KNOWN_JOB)
 
 
+KNOWN_JOB = Job(
+    title="Python Developer",
+    city="Seattle",
+    description="3+ years of experience testing and writing test automation for desktop and web applications. Skilled with testing on multiple platforms. Knowledgeable about designing and implementing infrastructure and APIs for automated test systems. Strong familiarity of database concepts is a plus.",
+    company="Python Coders",
+    url="http://www.python-coders.com",
+    )
+
+DUMMY_JOBS.append(KNOWN_JOB)
+
+
 @pytest.fixture(scope="session")
 def configuration(request):
     """Set up a Configurator instance.
@@ -240,7 +251,6 @@ def test_post_result_view_with_no_query(dummy_request):
     dummy_request.method = "POST"
     dummy_request.POST["location"] = ""
     dummy_request.POST["searchbar"] = ""
-    import pdb; pdb.set_trace()
 
     assert result_view(dummy_request) == {'no_query': 'no result'}
 
@@ -284,7 +294,7 @@ def test_result_query_on_get_matched_location_search(dummy_request,
 
     results = result_view(dummy_request)
 
-    assert results['results'].one().city == 'Seattle'
+    assert results['results'][0].city == 'Seattle'
 
 
 def test_result_query_on_get_matched_search(dummy_request,
@@ -298,7 +308,7 @@ def test_result_query_on_get_matched_search(dummy_request,
 
     results = result_view(dummy_request)
 
-    assert results['results'].one().title == 'Python Developer'
+    assert results['results'][0].title == 'Python Developer'
 
 
 def test_result_no_location_bad_search(dummy_request,
@@ -329,7 +339,7 @@ def test_result_query_on_get_matched_search_and_location(dummy_request,
 
     results = result_view(dummy_request)
 
-    assert results['results'].one().title == 'Python Developer'
+    assert results['results'][0].title == 'Python Developer'
 
 
 # ============= FUNTIONAL TESTS =====================
@@ -374,6 +384,88 @@ def fill_the_db(testapp):
     with transaction.manager:
         dbsession = get_tm_session(SessionFactory, transaction.manager)
         dbsession.add_all(DUMMY_JOBS)
+
+
+def test_the_home_page_has_a_form(testapp):
+    """The home page has 2 input boxes."""
+    response = testapp.get('/', status=200)
+    html = response.html
+    assert html.find_all("form")
+
+
+def test_the_results_page_has_a_form(testapp):
+    """The results page has 2 input boxes."""
+    response = testapp.get('/results?search=Python', status=200)
+    html = response.html
+    assert html.find_all("form")
+
+
+def test_the_home_page_has_two_input_boxes(testapp):
+    """The home page has 2 input boxes."""
+    response = testapp.get('/', status=200)
+    html = response.html
+    searchbar = html.find("input", {"name": "searchbar"})
+    location = html.find("input", {"name": "location"})
+    assert searchbar and location
+
+
+def test_the_results_page_has_two_input_boxes(testapp):
+    """The results page has 2 input boxes."""
+    response = testapp.get('/results?location=new+york', status=200)
+    html = response.html
+    searchbar = html.find("input", {"name": "searchbar"})
+    location = html.find("input", {"name": "location"})
+    assert searchbar and location
+
+
+def test_results_page_has_no_title_id_in_results_section(testapp):
+    """The results page has no title, if no query submitted."""
+    response = testapp.get('/results?search=Python', status=200)
+    html = response.html
+    assert len(html.find_all("item")) == 0
+
+
+def test_results_page_has_sad_octo_when_nothing_found(testapp, fill_the_db):
+    """The results page has sad octo, when nothing found on query."""
+    response = testapp.post("/results", params={
+        "searchbar": "Fortran",
+        "location": "Chicago"
+    }, status=302)
+    full_response = response.follow()
+    sad_octo = full_response.html.find(id="sad_octo")
+    assert sad_octo
+
+
+def test_home_page_has_sad_octo_when_nothing_found(testapp, fill_the_db):
+    """The home page has sad octo, when nothing found on query."""
+    response = testapp.post("/", params={
+        "searchbar": "Fortran",
+        "location": "Chicago"
+    }, status=302)
+    full_response = response.follow()
+    sad_octo = full_response.html.find(id="sad_octo")
+    assert sad_octo
+
+
+def test_results_page_has_mad_octo_when_nothing_entered_on_search(testapp, fill_the_db):
+    """The results page has mad octo, when nothing entered on query."""
+    response = testapp.post("/results", params={
+        "searchbar": "",
+        "location": ""
+    }, status=200)
+    mad_octo = response.html.find(id="mad_octo")
+    assert mad_octo
+
+
+def test_home_page_has_sad_octo_when_nothing_entered_on_search(testapp, fill_the_db):
+    """The home page has mad octo, when nothing entered on query."""
+    response = testapp.post("/", params={
+        "searchbar": "",
+        "location": ""
+    }, status=200)
+    html = response.html
+    mad_octo = html.find(id="mad_octo")
+    assert mad_octo
 
 
 # ============= SPIDER TESTS =====================
@@ -454,3 +546,4 @@ def test_create_full_dict(testapp, spider, empty_test_dict):
         company=company,
         city=city,
         description=description)
+    assert new_dict[url]["title"] == "Job"
