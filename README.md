@@ -71,3 +71,58 @@ We would like to thank the following libraries, frameworks, packages, resources,
 8. [Stack Overflow](http://stackoverflow.com/questions/6456304/scrapy-unit-testing/12751649)
 9. fake_Useragent
 10. [Scrapehero.com](https://www.scrapehero.com/how-to-prevent-getting-blacklisted-while-scraping/)
+
+## Tox Coverage Reports
+```
+---------- coverage: platform darwin, python 2.7.11-final-0 ----------
+Name                                                           Stmts   Miss  Cover   Missing
+--------------------------------------------------------------------------------------------
+octojobs/__init__.py                                              11      8    27%   8-15
+octojobs/models/__init__.py                                       22      0   100%
+octojobs/models/meta.py                                            5      0   100%
+octojobs/models/mymodel.py                                        11      0   100%
+octojobs/octojobs/octopus/octopus/__init__.py                      0      0   100%
+octojobs/octojobs/octopus/octopus/items.py                         8      0   100%
+octojobs/octojobs/octopus/octopus/middlewares.py                  18     10    44%   19-21, 28, 35-36, 44, 52-53, 56
+octojobs/octojobs/octopus/octopus/pipelines.py                    27     16    41%   17, 23, 38-40, 44-57
+octojobs/octojobs/octopus/octopus/settings.py                     18      0   100%
+octojobs/octojobs/octopus/octopus/spiders/__init__.py              0      0   100%
+octojobs/octojobs/octopus/octopus/spiders/practise_spider.py      12      6    50%   15-22, 28-30
+octojobs/octojobs/octopus/octopus/spiders/spider.py               65     47    28%   82-178
+octojobs/routes.py                                                 5      0   100%
+octojobs/scripts/__init__.py                                       0      0   100%
+octojobs/scripts/initializedb.py                                  28     18    36%   22-25, 29-55
+octojobs/views/__init__.py                                         0      0   100%
+octojobs/views/default.py                                         61      0   100%
+--------------------------------------------------------------------------------------------
+TOTAL                                                            291    105    64%
+
+
+=================================================================================== 32 passed in 2.81 seconds ===================================================================================
+
+
+---------- coverage: platform darwin, python 3.5.2-final-0 -----------
+Name                                                           Stmts   Miss  Cover   Missing
+--------------------------------------------------------------------------------------------
+octojobs/__init__.py                                              11      8    27%   8-15
+octojobs/models/__init__.py                                       22      0   100%
+octojobs/models/meta.py                                            5      0   100%
+octojobs/models/mymodel.py                                        11      0   100%
+octojobs/octojobs/octopus/octopus/__init__.py                      0      0   100%
+octojobs/octojobs/octopus/octopus/items.py                         8      0   100%
+octojobs/octojobs/octopus/octopus/middlewares.py                  18     10    44%   19-21, 28, 35-36, 44, 52-53, 56
+octojobs/octojobs/octopus/octopus/pipelines.py                    27     16    41%   17, 23, 38-40, 44-57
+octojobs/octojobs/octopus/octopus/settings.py                     18      0   100%
+octojobs/octojobs/octopus/octopus/spiders/__init__.py              0      0   100%
+octojobs/octojobs/octopus/octopus/spiders/practise_spider.py      12      6    50%   15-22, 28-30
+octojobs/octojobs/octopus/octopus/spiders/spider.py               65     47    28%   82-178
+octojobs/routes.py                                                 5      0   100%
+octojobs/scripts/__init__.py                                       0      0   100%
+octojobs/scripts/initializedb.py                                  28     18    36%   22-25, 29-55
+octojobs/views/__init__.py                                         0      0   100%
+octojobs/views/default.py                                         61      0   100%
+--------------------------------------------------------------------------------------------
+TOTAL                                                            291    105    64%
+
+=================================================================================== 32 passed in 4.00 seconds ===================================================================================
+```
