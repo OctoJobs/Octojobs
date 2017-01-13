@@ -28,6 +28,7 @@
             {% for result in results %}
                 <section class="addspace">
                     <h3 id="title"><a href="{{result.url}}">{{ result.title }}</a></h3>
+                    <p><b>{{ result.company }}</b></p>
                     <p id="city">{{ result.city }}</p>
                     <p id="description">{{ result.description }}</p>
                 </section>

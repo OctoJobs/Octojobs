@@ -48,9 +48,9 @@ class JobSpider(scrapy.Spider):
         # 'https://www.indeed.com/jobs?q=front+end&l=New+York%2C+NY',
         # 'https://www.indeed.com/jobs?q=full+stack&l=New+York%2C+NY',
         # 'https://www.indeed.com/jobs?q=data+scientist&l=New+York%2C+NY',
-        # 'https://www.dice.com/jobs?q=&l=seattle%2C+WA',
-        # 'https://www.dice.com/jobs?q=&l=San+Francisco+Bay+Area%2C+CA',
-        # 'https://www.dice.com/jobs?q=&l=New+York%2C+NY',
+        'https://www.dice.com/jobs?q=&l=seattle%2C+WA',
+        'https://www.dice.com/jobs?q=&l=San+Francisco+Bay+Area%2C+CA',
+        'https://www.dice.com/jobs?q=&l=New+York%2C+NY',
     ]
 
     def create_dict(self, empty_dict, url=None, title=None, company=None, city=None, description=None):
@@ -146,7 +146,7 @@ class JobSpider(scrapy.Spider):
                 url = re.search(
                     r'href="([^"]*)"', anchor).group(1)
                 company = element.css(
-                    'ul.list-inline a.dice-btn-link::text').extract_first()
+                    'ul.list-inline li.employer a.dice-btn-link::text').extract_first()
                 description = ' '.join(element.css(
                     'div.shortdesc::text').extract_first().split())
                 city = element.css(

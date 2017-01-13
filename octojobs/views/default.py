@@ -76,8 +76,8 @@ def result_view(request):
             ))
             if filter_query.count() > 0:
                 search_hit = filter_query
-                break
 
+        if filter_query.count() == 0:
             return {'failed_search': 'No results'}
 
     elif searchterm and location is None:
@@ -88,7 +88,7 @@ def result_view(request):
             if filter_query.count() > 0:
                 search_hit = filter_query
                 break
-
+        if filter_query.count() == 0:
             return {'failed_search': 'No results'}
 
     elif location and searchterm is None:
