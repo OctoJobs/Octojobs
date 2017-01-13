@@ -23,7 +23,7 @@ time, mark, audio, video {
 
 /* HTML5 display-role reset for older browsers */
 article, aside, details, figcaption, figure,
-footer, header, hgroup, menu, nav, section {
+footer, header, hgroup, .jumbotron, main, menu, nav, section {
     display: block;
 }
 
@@ -58,7 +58,7 @@ html {
     margin:0 auto 0 auto;
     border:15px solid #325877;
     background:#ffffff; 
-    height: 250%;
+    padding-bottom: 150%;
     width: 100%;
 }
 
@@ -172,4 +172,8 @@ button {
 
 #intro p{
     text-align: justify;
+}
+
+.addspace {
+    margin: 30px 0;
 }

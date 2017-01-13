@@ -25,9 +25,11 @@
                 <img id="sad_octo" class="resultsimg" src="{{request.static_url('octojobs:static/sad_octo.jpg')}}"/>
             {% endif %}
             {% for result in results %}
-                <h3 id="title"><a href="{{result.url}}">{{ result.title }}</a></h3>
-                <p id="city">{{ result.city }}</p>
-                <p id="description">{{ result.description }}</p>
+                <section class="addspace">
+                    <h3 id="title"><a href="{{result.url}}">{{ result.title }}</a></h3>
+                    <p id="city">{{ result.city }}</p>
+                    <p id="description">{{ result.description }}</p>
+                </section>
             {% endfor %}
         </section>
 {% endblock %}
