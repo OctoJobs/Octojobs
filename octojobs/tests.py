@@ -294,7 +294,7 @@ def test_result_query_on_get_matched_location_search(dummy_request,
 
     results = result_view(dummy_request)
 
-    assert results['results'].one().city == 'Seattle'
+    assert results['results'][0].city == 'Seattle'
 
 
 def test_result_query_on_get_matched_search(dummy_request,
@@ -308,7 +308,7 @@ def test_result_query_on_get_matched_search(dummy_request,
 
     results = result_view(dummy_request)
 
-    assert results['results'].one().title == 'Python Developer'
+    assert results['results'][0].title == 'Python Developer'
 
 
 def test_result_no_location_bad_search(dummy_request,
@@ -339,7 +339,7 @@ def test_result_query_on_get_matched_search_and_location(dummy_request,
 
     results = result_view(dummy_request)
 
-    assert results['results'].one().title == 'Python Developer'
+    assert results['results'][0].title == 'Python Developer'
 
 
 # ============= FUNTIONAL TESTS =====================
