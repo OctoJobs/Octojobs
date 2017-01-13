@@ -1,5 +1,9 @@
-![OctoJobs](octojobs/static/images/logo.png) #OCTOJOBS#
-## Deployed at: octojobs-cf.herokuapp.com
+#OCTOJOBS#
+
+![logo](octojobs/static/images/logo.png) 
+
+Deployed on Heroku as [octojobs-cf](octojobs-cf.herokuapp.com)
+
 
 Octojobs is an open source webscraper and job opportunity aggregator. It scrapes a jobboard website, such as Indeed or Dice.com, and returns a query of jobs based on user-provided keywords and locations.
 
