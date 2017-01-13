@@ -35,7 +35,6 @@ footer, header, hgroup, menu, nav, section {
 
 header {
     position: relative;
-    width: 940px;
     margin: 5% 30% 0 30%;
     background-color: rgba(41, 100, 131, 0.3);
 }
@@ -60,6 +59,7 @@ html {
     border:15px solid #325877;
     background:#ffffff; 
     height: 250%;
+    width: 100%;
 }
 
 .jumbotron {
@@ -76,8 +76,8 @@ html {
     height: 100px;
     width: 100px;
     background-repeat: no-repeat;
-    margin: 30px;
-    left: 42%;
+    margin: 3%;
+    left: 43%;
     position: absolute;
 
 }
@@ -168,4 +168,8 @@ button {
     position: absolute;
     left: 9%;
     margin: 30px 0;
+}
+
+#intro p{
+    text-align: justify;
 }

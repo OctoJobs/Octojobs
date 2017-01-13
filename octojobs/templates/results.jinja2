@@ -25,7 +25,7 @@
                 <img id="sad_octo" class="resultsimg" src="{{request.static_url('octojobs:static/sad_octo.jpg')}}"/>
             {% endif %}
             {% for result in results %}
-                <h3>{{ result.title }}</h3>
+                <h3><a href="{{result.url}}">{{ result.title }}</a></h3>
                 <p>{{ result.city }}</p>
                 <p>{{ result.description }}</p>
             {% endfor %}
