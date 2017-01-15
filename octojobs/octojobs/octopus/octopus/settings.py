@@ -42,13 +42,9 @@ COOKIES_ENABLED = False
 
 DATABASE = {
     'drivername': 'postgres',
-    # 'host': 'localhost',
-    'host': os.environ["DATABASE_URL"],
+    'host': 'localhost',
     'port': '5432',
-    'username': 'nupuvbtqqrqeww',
-    'password': os.environ["PASSWORD"],
-    'database': 'd3r8gpjvd7ucvv',
-    # 'database': 'octojobs'
+    'database': 'octojobs'
 }
 
 # Disable Telnet Console (enabled by default)
