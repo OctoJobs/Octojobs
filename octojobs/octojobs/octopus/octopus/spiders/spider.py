@@ -48,46 +48,38 @@ class JobSpider(scrapy.Spider):
         # 'https://www.indeed.com/jobs?q=front+end&l=New+York%2C+NY',
         # 'https://www.indeed.com/jobs?q=full+stack&l=New+York%2C+NY',
         # 'https://www.indeed.com/jobs?q=data+scientist&l=New+York%2C+NY',
-        # 'https://www.dice.com/jobs?q=&l=seattle%2C+WA',
-        # 'https://www.dice.com/jobs?q=&l=San+Francisco+Bay+Area%2C+CA',
-        # 'https://www.dice.com/jobs?q=&l=New+York%2C+NY',
-        'https://www.indeed.com/jobs?q=secdb&l=New+York%2C+NY',
-        'https://www.dice.com/jobs/q-Go-jtype-Contract+Independent-limit-30-l-Seattle-radius-30-jobs.html?searchid=2018379535598'
+        'https://www.dice.com/jobs?q=&l=seattle%2C+WA',
+        'https://www.dice.com/jobs?q=&l=San+Francisco+Bay+Area%2C+CA',
+        'https://www.dice.com/jobs?q=&l=New+York%2C+NY',
     ]
 
-    # def create_dict(self, empty_dict, url=None, title=None, company=None, city=None, description=None):
-    #     """Takes in an empty dictionary, and the items pulled from html.
-    #     Creates a new dictionary within that dictionary holding these items."""
-    #     empty_dict[url] = {}
-    #     empty_dict[url]['url'] = url
-    #     empty_dict[url]['title'] = title
-    #     empty_dict[url]['company'] = company
-    #     empty_dict[url]['city'] = city
-    #     empty_dict[url]['description'] = description
-    #     return empty_dict
+    def create_dict(self, empty_dict, url=None, title=None, company=None, city=None, description=None):
+        """Takes in an empty dictionary, and the items pulled from html.
+        Creates a new dictionary within that dictionary holding these items."""
+        empty_dict[url] = {}
+        empty_dict[url]['url'] = url
+        empty_dict[url]['title'] = title
+        empty_dict[url]['company'] = company
+        empty_dict[url]['city'] = city
+        empty_dict[url]['description'] = description
+        return empty_dict
 
-    # def build_items(self, items, full_dict, key):
-    #     """Takes in a dictionary and a dict key.
-    #     [strikethrough]Returns an instance of the item class, to be passed to pipelines.[strikethrough]
-    #     Adds a new entry to the items dictionary where key is the url to the job
-    #     and the value is an object of type OctopusItem.
-    #     The key could actually be something more useful as we already have the
-    #     key in the dict itself. Better would be the id of the job post if
-    #     provided."""
-    #
-    #
-    #     items[key] = OctopusItem(
-    #                     title=full_dict[key]['title'],
-    #                     url=full_dict[key]['url'],
-    #                     company=full_dict[key]['company'],
-    #                     city=full_dict[key]['city'],
-    #                     description=full_dict[key]['description'],
-    #                 )
-    #     import pdb; pdb.set_trace()
-    #     return items
+    def build_items(self, items, full_dict, key):
+        """Takes in a dictionary and a dict key.
+        Returns an instance of the item class, to be passed to pipelines."""
+
+        items[key] = OctopusItem(
+                        title=full_dict[key]['title'],
+                        url=full_dict[key]['url'],
+                        company=full_dict[key]['company'],
+                        city=full_dict[key]['city'],
+                        description=full_dict[key]['description'],
+                    )
+        return items
 
     def parse(self, response):
         """Default callback used by Scrapy to process downloaded responses."""
+        items = {}
         company_dict = {}
         dice_company_dict = {}
 
@@ -114,25 +106,27 @@ class JobSpider(scrapy.Spider):
                     'div.result span.summary::text').extract_first()
 
                 """Set up dictionary for Indeed job info"""
+                self.create_dict(
+                    company_dict,
+                    url,
+                    title,
+                    company,
+                    city,
+                    description)
 
-                company_dict[url] = {
-                    'url': url,
-                    'title': title,
-                    'company': company,
-                    'description': description,
-                    'city': city
-                }
-                import pdb; pdb.set_trace()
+            """Follow each link, and build items to pass to pipeline."""
+            for key in company_dict:
+                yield scrapy.Request(key)
 
-            #commented out because it's broken
-            # """Follow each link, and build items to pass to pipeline."""
-            # for key in company_dict:
-            #     yield scrapy.Request(key)
-            #
-            #     company_dict[key]['description'] = response.css(
-            #         'span.summary::text').extract_first()
-            #     self.build_items(items, company_dict, key)
-            #     continue
+                if not response.xpath('//*[@id="job-content"]'):
+                    self.build_items(items, company_dict, key)
+                    continue
+
+                else:
+                    company_dict[key]['description'] = response.css(
+                        'span.summary::text').extract_first()
+                    self.build_items(items, company_dict, key)
+                    continue
 
             """Find the next page of job postings. Go there and call parse."""
             next_page = response.css(
@@ -159,37 +153,26 @@ class JobSpider(scrapy.Spider):
                     'ul.list-inline li.location::text').extract_first()
 
                 """Set up dictionary for Dice job info"""
+                self.create_dict(
+                    dice_company_dict,
+                    url,
+                    title,
+                    company,
+                    city,
+                    description)
 
-                dice_company_dict[url] = {
-                    'url': url,
-                    'title': title,
-                    'company': company,
-                    'description': description,
-                    'city': city
-                }
-                import pdb; pdb.set_trace()
+            """Follow each link, and build items to pass to pipeline."""
+            for key in dice_company_dict:
+                yield scrapy.Request(key)
 
+                if not response.css('div.highlight-black::text'):
+                    self.build_items(items, dice_company_dict, key)
+                    continue
 
-            #commented out below functionalty to try to parse the description
-            #because it's broken
-            # """Follow each link, and build items to pass to pipeline."""
-            #
-            # for key in dice_company_dict:
-            #     import pdb; pdb.set_trace()
-            #     yield scrapy.Request(key)
-            #
-            #     dice_company_dict[key]['description'] = response.css(
-            #             'div.highlight-black::text').extract_first()
-            #     continue
-        import pdb; pdb.set_trace()
-        items_indeed = {key : OctopusItem(company_dict[key]) for key in company_dict.keys()}
-        items_dice = {key : OctopusItem(dice_company_dict[key]) for key in dice_company_dict.keys()}
+                else:
+                    dice_company_dict[key]['description'] = response.css(
+                        'div.highlight-black::text').extract_first()
+                    self.build_items(items, dice_company_dict, key)
+                    continue
 
-        items = {**items_indeed, **items_dice}
-
-            # for key in dice_company_dict.keys():
-            #     # import pdb; pdb.set_trace()
-            #     op = OctopusItem(dice_company_dict[key])
-            #     items[key] = op
-        import pdb; pdb.set_trace()
         yield items
