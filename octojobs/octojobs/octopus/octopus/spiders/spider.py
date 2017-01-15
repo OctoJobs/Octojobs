@@ -51,6 +51,7 @@ class JobSpider(scrapy.Spider):
         # 'https://www.dice.com/jobs?q=&l=seattle%2C+WA',
         # 'https://www.dice.com/jobs?q=&l=San+Francisco+Bay+Area%2C+CA',
         # 'https://www.dice.com/jobs?q=&l=New+York%2C+NY',
+        'https://www.indeed.com/jobs?q=secdb&l=New+York%2C+NY',
         'https://www.dice.com/jobs/q-Go-jtype-Contract+Independent-limit-30-l-Seattle-radius-30-jobs.html?searchid=2018379535598'
     ]
 
@@ -87,10 +88,8 @@ class JobSpider(scrapy.Spider):
 
     def parse(self, response):
         """Default callback used by Scrapy to process downloaded responses."""
-        items = {}
         company_dict = {}
         dice_company_dict = {}
-        dice_company_dict_rf = {}
 
         if response.xpath('//*[@id="resultsCol"]'):
             """Search through Indeed list view for links to jobs."""
@@ -115,28 +114,25 @@ class JobSpider(scrapy.Spider):
                     'div.result span.summary::text').extract_first()
 
                 """Set up dictionary for Indeed job info"""
-                self.create_dict(
-                    company_dict,
-                    url,
-                    title,
-                    company,
-                    city,
-                    description)
 
+                company_dict[url] = {
+                    'url': url,
+                    'title': title,
+                    'company': company,
+                    'description': description,
+                    'city': city
+                }
+                import pdb; pdb.set_trace()
 
-            """Follow each link, and build items to pass to pipeline."""
-            for key in company_dict:
-                yield scrapy.Request(key)
-
-                if not response.xpath('//*[@id="job-content"]'):
-                    self.build_items(items, company_dict, key)
-                    continue
-
-                else:
-                    company_dict[key]['description'] = response.css(
-                        'span.summary::text').extract_first()
-                    self.build_items(items, company_dict, key)
-                    continue
+            #commented out because it's broken
+            # """Follow each link, and build items to pass to pipeline."""
+            # for key in company_dict:
+            #     yield scrapy.Request(key)
+            #
+            #     company_dict[key]['description'] = response.css(
+            #         'span.summary::text').extract_first()
+            #     self.build_items(items, company_dict, key)
+            #     continue
 
             """Find the next page of job postings. Go there and call parse."""
             next_page = response.css(
@@ -171,31 +167,29 @@ class JobSpider(scrapy.Spider):
                     'description': description,
                     'city': city
                 }
+                import pdb; pdb.set_trace()
 
 
             #commented out below functionalty to try to parse the description
-            #for 2 reasons: it's broken and we don't want to lose the shortdesc
+            #because it's broken
             # """Follow each link, and build items to pass to pipeline."""
             #
             # for key in dice_company_dict:
             #     import pdb; pdb.set_trace()
             #     yield scrapy.Request(key)
             #
-            #     if not response.css('div.highlight-black::text'):
-            #         self.build_items(items, dice_company_dict, key)
-            #         continue
-            #
-            #     else:
-            #         dice_company_dict[key]['description'] = response.css(
+            #     dice_company_dict[key]['description'] = response.css(
             #             'div.highlight-black::text').extract_first()
-            #         self.build_items(items, dice_company_dict, key)
-            #         continue
-            #
-            # # for key in dice_company_dict_rf:
-            # #     items[key] = OctopusItem(dice_company_dict_rf[key]
-            for key in dice_company_dict.keys():
-                # import pdb; pdb.set_trace()
-                op = OctopusItem(dice_company_dict[key])
-                items[key] = op
-        # import pdb; pdb.set_trace()
+            #     continue
+        import pdb; pdb.set_trace()
+        items_indeed = {key : OctopusItem(company_dict[key]) for key in company_dict.keys()}
+        items_dice = {key : OctopusItem(dice_company_dict[key]) for key in dice_company_dict.keys()}
+
+        items = {**items_indeed, **items_dice}
+
+            # for key in dice_company_dict.keys():
+            #     # import pdb; pdb.set_trace()
+            #     op = OctopusItem(dice_company_dict[key])
+            #     items[key] = op
+        import pdb; pdb.set_trace()
         yield items
