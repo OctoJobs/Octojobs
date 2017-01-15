@@ -5,16 +5,11 @@ from octopus.items import OctopusItem
 
 
 class DiceSpider(scrapy.Spider):
-    """Crawl each url in start_urls and extract data.
-    Data will be ported into pipelines as OctopusItem instances.
-    Pipelines will find each item instance and pass it to the database.
+    """Crawl each url in start_urls.
 
-    parse(self, response) is the default callback method for the Spider class.
-    It takes in the HTTP response, pulls data from html tags using CSS/ x-path
-    selectors, and uses that data to create OctopusItem instances. The pipelines.py
-    file takes in those item instances and writes them to the database.
-
-    And run the parse method on each of them.
+    parse(self, response) is the default callback method for the Spider class
+    for parsing the response object using CSS/x-path and yield an object of type
+    OctopusItem to the pipeline.
     """
 
     name = "dice"
@@ -39,7 +34,8 @@ class DiceSpider(scrapy.Spider):
             description = ' '.join(element.css(
                 'div.shortdesc::text').extract_first().split())
             city = element.css(
-                'ul.list-inline li.location::text').extract_first(
+                'ul.list-inline li.location::text').extract_first()
+
             """Set up dictionary for Dice job info"""
 
             dice_company_dict[url] = {
@@ -49,6 +45,7 @@ class DiceSpider(scrapy.Spider):
                 'description': description,
                 'city': city
             }
+
 
         #commented out below functionalty to try to parse the description
         #because it's broken
@@ -62,13 +59,6 @@ class DiceSpider(scrapy.Spider):
         #             'div.highlight-black::text').extract_first()
         #     continue
 
-        items_dice = {key : OctopusItem(dice_company_dict[key]) for key in dice_company_dict.keys()}
-
-        items = {**items_indeed, **items_dice}
-
-            # for key in dice_company_dict.keys():
-            #     # import pdb; pdb.set_trace()
-            #     op = OctopusItem(dice_company_dict[key])
-            #     items[key] = op
-    import pdb; pdb.set_trace()
-    yield items
+        items = {key : OctopusItem(dice_company_dict[key]) for key in dice_company_dict.keys()}
+        # import pdb; pdb.set_trace()
+        yield items
