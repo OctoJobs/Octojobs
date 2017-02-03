@@ -39,8 +39,11 @@ As a developer, we want to learn webscraping and data cleaning techniques.
 This app was created in 4 days by the lovely and talented:
 
 [Claire Gatenby](https://github.com/clair3st)
+
 [Colin Lamont](https://github.com/chamberi)
+
 [Marc Kessler-Wenicker](https://github.com/wenima)
+
 [Rachael Wisecarver](https://github.com/rwisecar)
 
 
@@ -65,16 +68,16 @@ pip install -e .[testing]
 
 ## Third Party Resources
 We would like to thank the following libraries, frameworks, packages, resources, and people.
-1. [Scrapy](https://doc.scrapy.org/en/latest/)
-2. Pyramid
-3. postgreSQL
-4. Heroku
-5. Waffle
-6. Bootstrap
-7. [Github user econchick and her NewCoder Blog](http://newcoder.io/scrape/)
-8. [Stack Overflow](http://stackoverflow.com/questions/6456304/scrapy-unit-testing/12751649)
-9. fake_Useragent
-10. [Scrapehero.com](https://www.scrapehero.com/how-to-prevent-getting-blacklisted-while-scraping/)
+- [Scrapy](https://doc.scrapy.org/en/latest/)
+- Pyramid
+- postgreSQL
+- Heroku
+- Waffle
+- Bootstrap
+- [Github user econchick and her NewCoder Blog](http://newcoder.io/scrape/)
+- [Stack Overflow](http://stackoverflow.com/questions/6456304/scrapy-unit-testing/12751649)
+- fake_Useragent
+- [Scrapehero.com](https://www.scrapehero.com/how-to-prevent-getting-blacklisted-while-scraping/)
 
 ## Tox Coverage Reports
 ```
