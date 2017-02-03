@@ -1,0 +1,32 @@
+{% extends "layout.jinja2" %}
+
+{% block body %}
+    <section class="jumbotron">
+        <section id="intro" class="row">
+            <p>Octojobs is a web scraping app designed to help you find your next opportunity. Just enter a keyword, like "Python" or "Javascript", and a location, and we'll stretch out our tentacles and find the latest job postings from a variety of websites.</p>
+        </section>
+        <section id="searchbar" class="row">
+            <div class="form">
+                <div class="input-group" class="form-group row">
+                    <form method="POST" size=300px>
+                        <input type="text" id="keyword" name="searchbar" placeholder="Search for..."/>
+                        <input type="text" id="location" name="location" placeholder="Location"/>
+                        <span class="input-group-btn">
+                        <button class="btn btn-default" type="submit">Go!</button>
+                        </span>
+                    </form>
+                </div>
+            </div>
+            <hr>
+        </section>
+    </section>
+    <section>
+        {% if no_query == 'no result' %}
+            <h1>You need to enter something.</h1>
+            <img id="mad_octo" src="{{request.static_url('octojobs:static/mad_octo.jpg')}}"/>
+        {% elif failed_search == "No results" %}
+            <h1>We found nothing. Search again, please.</h1>
+            <img id="sad_octo" src="{{request.static_url('octojobs:static/sad_octo.jpg')}}"/>
+        {% endif %}
+    </section>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "layout.jinja2" %}
+
+{% block body %}
+    <section class="jumbotron">
+        <section id="searchbar" class="row">
+            <div class="form">
+                <div class="input-group" class="form-group row">
+                    <form method="POST" size=300px>
+                        <input type="text" id="keyword" name="searchbar" placeholder="Search for..."/>
+                        <input type="text" id="location" name="location" placeholder="Location"/>
+                        <span class="input-group-btn">
+                        <button class="btn btn-default" type="submit">Go!</button>
+                        </span>
+                    </form>
+                </div>
+            </div>
+            <hr>
+        </section>
+    </section>
+        <section id="results">
+            {% if no_query == 'no result' %}
+                <h2>You need to enter something.</h2>
+                <img id="mad_octo" class="resultsimg" src="{{request.static_url('octojobs:static/mad_octo.jpg')}}"/>
+            {% elif failed_search == "No results" %}
+                <h2>We found nothing. Search again, please.</h2>
+                <img id="sad_octo" class="resultsimg" src="{{request.static_url('octojobs:static/sad_octo.jpg')}}"/>
+            {% endif %}
+            {% for result in results %}
+                <section class="addspace">
+                    <h3 id="title"><a href="{{result.url}}">{{ result.title }}</a></h3>
+                    <p><b>{{ result.company }}</b></p>
+                    <p id="city">{{ result.city }}</p>
+                    <p id="description">{{ result.description }}</p>
+                </section>
+            {% endfor %}
+        </section>
+{% endblock %}
